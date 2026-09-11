@@ -1,0 +1,31 @@
+{
+  "datasets": {
+    "financial_crisis": {
+      "samples": 100,
+      "features": 21,
+      "crisis_types": [
+        "job_loss",
+        "medical_emergency",
+        "business_failure",
+        "debt_crisis",
+        "market_crash",
+        "inflation_spike"
+      ],
+      "avg_survival_months": 8.337171061645988,
+      "default_rate": 0.21
+    },
+    "fraud_detection": {
+      "samples": 200,
+      "features": 16,
+      "fraud_rate": 0.04,
+      "avg_transaction_amount": 27.53638492130134
+    },
+    "income_volatility": {
+      "samples": 120,
+      "features": 20,
+      "avg_income_volatility": 0.042057302373618585,
+      "high_layoff_risk_percentage": 0.0
+    }
+  },
+  "generation_timestamp": "2026-04-21T17:10:26.805301"
+}

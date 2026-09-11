@@ -1,0 +1,31 @@
+{
+  "user": {
+    "name": "Sample User",
+    "age": 26,
+    "industry": "IT",
+    "experience_years": 3,
+    "job_role": "Developer"
+  },
+  "financials": {
+    "annualIncome": 52000,
+    "annualExpenses": 31000,
+    "monthlyIncome": 4333.33,
+    "monthlyExpenses": 2583.33,
+    "rent": 7000,
+    "emi": 5000,
+    "groceries": 6000,
+    "lifestyle": 4000,
+    "savings": 18000,
+    "emergencyFund": 45000
+  },
+  "investments": {
+    "monthlySip": 2000,
+    "stocks": 12000,
+    "bonds": 4000
+  },
+  "transactions": [
+    { "date": "2025-01-05", "category": "salary", "amount": 4333.33, "type": "income" },
+    { "date": "2025-01-06", "category": "rent", "amount": -583.33, "type": "expense" },
+    { "date": "2025-01-07", "category": "groceries", "amount": -500, "type": "expense" }
+  ]
+}

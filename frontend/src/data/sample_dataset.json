@@ -1,0 +1,47 @@
+{
+  "monthlyIncome": 52000,
+  "monthlyExpenses": 31000,
+  "savings": 21000,
+  "emergencyFund": 45000,
+  "debt": 95000,
+  "age": 26,
+  "dependents": 1,
+  "employmentType": "salaried",
+  "riskTolerance": 6,
+  "industry": "IT",
+  "experience_years": 3,
+  "job_role": "Developer",
+  "market_risk": "medium",
+  "investmentHistory": {
+    "sip": 5000,
+    "stocks": 2000,
+    "bonds": 3000
+  },
+  "debt_profile": {
+    "personal_loan": 80000,
+    "credit_card": 15000,
+    "total_debt": 95000,
+    "debt_ratio": 23
+  },
+  "trends": {
+    "income": [
+      { "date": "2025-01-01", "value": 51000 },
+      { "date": "2025-02-01", "value": 52000 },
+      { "date": "2025-03-01", "value": 52500 }
+    ],
+    "expenses": [
+      { "date": "2025-01-01", "value": 30000 },
+      { "date": "2025-02-01", "value": 31000 },
+      { "date": "2025-03-01", "value": 31500 }
+    ]
+  },
+  "benchmarks": {
+    "average_survival_period": 2.1,
+    "average_stability_score": 65,
+    "industry_averages": {
+      "IT": { "survival_period": 2.8, "stability_score": 72 },
+      "Finance": { "survival_period": 3.2, "stability_score": 78 },
+      "Healthcare": { "survival_period": 2.5, "stability_score": 68 }
+    }
+  }
+}

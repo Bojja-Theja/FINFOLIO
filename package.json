@@ -1,0 +1,39 @@
+{
+  "name": "finfolio",
+  "version": "1.0.0",
+  "description": "Financial health benchmarking and portfolio platform",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
+    "@types/node": "^24.10.1",
+    "concurrently": "^8.2.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "dev": "concurrently \"cd frontend && npm run dev\" \"cd backend-api && npm run dev\" \"cd ml-service && /home/rgukt/Github/CAPSTACK/.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend-api && npm run dev",
+    "dev:ml": "cd ml-service && /home/rgukt/Github/CAPSTACK/.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend-api && npm run build",
+    "test": "npm run test:frontend && npm run test:backend",
+    "test:frontend": "cd frontend && npm test",
+    "test:backend": "cd backend-api && npm test",
+    "start": "bash scripts/start_all.sh",
+    "start:frontend": "cd frontend && npm run start",
+    "start:backend": "cd backend-api && npm start",
+    "start:ml": "cd ml-service && /home/rgukt/Github/CAPSTACK/.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000",
+    "lint": "concurrently \"npm run lint:frontend\" \"npm run lint:backend\"",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:backend": "cd backend-api && npm run lint",
+    "install:all": "npm install && cd frontend && npm install && cd .. && cd backend-api && npm install && cd .. && cd ml-service && pip install -r requirements.txt"
+  }
+}

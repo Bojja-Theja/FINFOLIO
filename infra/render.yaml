@@ -1,0 +1,45 @@
+# TODO: Configure Render deployment
+# This is a placeholder for automated deployment configuration
+# Add services, databases, and deployment settings
+
+services:
+  - type: web
+    name: capstack-backend
+    env-vars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    plan: free
+    region: ohio
+    buildCommand: cd backend-api && npm install && npm run build
+    startCommand: cd backend-api && npm start
+    healthCheckPath: /health
+
+  - type: web
+    name: capstack-ml
+    env: python
+    plan: free
+    region: ohio
+    buildCommand: cd ml-service && pip install -r requirements.txt
+    startCommand: cd ml-service && uvicorn app.main:app --host 0.0.0.0 --port 10000
+
+  - type: web
+    name: capstack-frontend
+    env: node
+    plan: free
+    region: ohio
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          name: capstack-backend
+          type: web
+          property: host
+
+databases:
+  - name: capstack-db
+    databaseName: capstack
+    plan: free
+    region: ohio
