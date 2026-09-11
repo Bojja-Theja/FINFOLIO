@@ -17,6 +17,9 @@ function getApiBackendUrl(): string {
   }
 
   // 3. Server-side default
+  if (process.env.NODE_ENV !== 'production') {
+    return "http://localhost:3001";
+  }
   return "https://finfolio-backend.onrender.com";
 }
 
@@ -37,6 +40,9 @@ function getMLUrl(): string {
   }
 
   // 3. Server-side default
+  if (process.env.NODE_ENV !== 'production') {
+    return "http://localhost:8000";
+  }
   return "https://finfolio-ml.onrender.com";
 }
 

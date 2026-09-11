@@ -18,6 +18,9 @@ function getBackendUrl(): string {
   }
 
   // 3. Server-side default (SSR)
+  if (process.env.NODE_ENV !== 'production') {
+    return "http://localhost:3001";
+  }
   return "https://finfolio-backend.onrender.com";
 }
 
