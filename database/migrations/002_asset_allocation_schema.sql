@@ -1,4 +1,4 @@
--- Asset Allocation Tables for CAPSTACK
+-- Asset Allocation Tables for FINFOLIO
 
 -- User Financial Profiles for Benchmarking
 CREATE TABLE user_financial_profiles (

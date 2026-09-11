@@ -1,4 +1,4 @@
--- Dataset attachments for CAPSTACK
+-- Dataset attachments for FINFOLIO
 CREATE TABLE dataset_salary (
     id SERIAL PRIMARY KEY,
     years_experience DECIMAL(5, 2) NOT NULL,

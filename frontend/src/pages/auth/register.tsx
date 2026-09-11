@@ -95,7 +95,7 @@ export default function Register() {
           Create Account
         </Typography>
         <Typography variant="body1" color="text.secondary" align="center" sx={{ mb: 4 }}>
-          Join CAPSTACK to manage your finances
+          Join FINFOLIO to manage your finances
         </Typography>
 
         {error && (

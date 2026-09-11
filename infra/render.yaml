@@ -4,7 +4,7 @@
 
 services:
   - type: web
-    name: capstack-backend
+    name: finfolio-backend
     env-vars:
       - key: NODE_ENV
         value: production
@@ -17,7 +17,7 @@ services:
     healthCheckPath: /health
 
   - type: web
-    name: capstack-ml
+    name: finfolio-ml
     env: python
     plan: free
     region: ohio
@@ -25,7 +25,7 @@ services:
     startCommand: cd ml-service && uvicorn app.main:app --host 0.0.0.0 --port 10000
 
   - type: web
-    name: capstack-frontend
+    name: finfolio-frontend
     env: node
     plan: free
     region: ohio
@@ -34,12 +34,12 @@ services:
     envVars:
       - key: NEXT_PUBLIC_API_URL
         fromService:
-          name: capstack-backend
+          name: finfolio-backend
           type: web
           property: host
 
 databases:
-  - name: capstack-db
-    databaseName: capstack
+  - name: finfolio-db
+    databaseName: finfolio
     plan: free
     region: ohio

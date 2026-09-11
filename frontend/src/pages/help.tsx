@@ -183,7 +183,7 @@ const Help = () => {
                                         <Email />
                                         <Box>
                                             <Typography variant="caption" sx={{ opacity: 0.9 }}>Email</Typography>
-                                            <Typography variant="body2" sx={{ fontWeight: 600 }}>support@capstack.com</Typography>
+                                            <Typography variant="body2" sx={{ fontWeight: 600 }}>support@finfolio.com</Typography>
                                         </Box>
                                     </Box>
                                 </Grid>

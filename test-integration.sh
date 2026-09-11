@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# CAPSTACK Dataset Integration & UI/UX Testing Script
+# FINFOLIO Dataset Integration & UI/UX Testing Script
 
-echo "🧪 CAPSTACK Testing Suite"
+echo "🧪 FINFOLIO Testing Suite"
 echo "=========================="
 echo ""
 
@@ -32,13 +32,13 @@ echo "----------------------"
 
 # Test 1: Backend Build
 echo -n "Testing backend build... "
-cd /home/abdul/Documents/CAREER/CAPSTACK-2k25/backend-api
+cd /home/abdul/Documents/CAREER/FINFOLIO/backend-api
 npm run build > /dev/null 2>&1
 print_result $? "Backend TypeScript compilation"
 
 # Test 2: Frontend Build  
 echo -n "Testing frontend build... "
-cd /home/abdul/Documents/CAREER/CAPSTACK-2k25/frontend
+cd /home/abdul/Documents/CAREER/FINFOLIO/frontend
 timeout 120 npm run build > /dev/null 2>&1
 print_result $? "Frontend Next.js build"
 
@@ -48,7 +48,7 @@ echo "-------------------------"
 
 # Test 3: Check dataset files exist
 echo -n "Checking dataset files... "
-DATASET_DIR="/home/abdul/Documents/CAREER/CAPSTACK-2k25/dataset"
+DATASET_DIR="/home/abdul/Documents/CAREER/FINFOLIO/dataset"
 if [ -f "$DATASET_DIR/Salary.csv" ] && \
    [ -f "$DATASET_DIR/turnover.csv" ] && \
    [ -f "$DATASET_DIR/stock/portfolio_data.csv" ] && \
@@ -74,7 +74,7 @@ echo "------------------------------"
 
 # Test 5: Check for TypeScript errors in new files
 echo -n "Checking datasetService.ts... "
-if [ -f "/home/abdul/Documents/CAREER/CAPSTACK-2k25/backend-api/dist/services/datasetService.js" ]; then
+if [ -f "/home/abdul/Documents/CAREER/FINFOLIO/backend-api/dist/services/datasetService.js" ]; then
     print_result 0 "datasetService compiled successfully"
 else
     print_result 1 "datasetService compilation failed"
@@ -82,7 +82,7 @@ fi
 
 # Test 6: Check insights controller
 echo -n "Checking insightsController.ts... "
-if [ -f "/home/abdul/Documents/CAREER/CAPSTACK-2k25/backend-api/dist/controllers/insightsController.js" ]; then
+if [ -f "/home/abdul/Documents/CAREER/FINFOLIO/backend-api/dist/controllers/insightsController.js" ]; then
     print_result 0 "insightsController compiled successfully"
 else
     print_result 1 "insightsController compilation failed"
@@ -90,7 +90,7 @@ fi
 
 # Test 7: Check insights routes
 echo -n "Checking insightsRoutes.ts... "
-if [ -f "/home/abdul/Documents/CAREER/CAPSTACK-2k25/backend-api/dist/routes/insightsRoutes.js" ]; then
+if [ -f "/home/abdul/Documents/CAREER/FINFOLIO/backend-api/dist/routes/insightsRoutes.js" ]; then
     print_result 0 "insightsRoutes compiled successfully"
 else
     print_result 1 "insightsRoutes compilation failed"
@@ -102,7 +102,7 @@ echo "------------------------------"
 
 # Test 8: Check UI components exist
 echo -n "Checking GlassCard component... "
-if [ -f "/home/abdul/Documents/CAREER/CAPSTACK-2k25/frontend/src/components/ui/GlassCard.tsx" ]; then
+if [ -f "/home/abdul/Documents/CAREER/FINFOLIO/frontend/src/components/ui/GlassCard.tsx" ]; then
     print_result 0 "GlassCard component created"
 else
     print_result 1 "GlassCard component missing"
@@ -110,7 +110,7 @@ fi
 
 # Test 9: Check GradientButton
 echo -n "Checking GradientButton component... "
-if [ -f "/home/abdul/Documents/CAREER/CAPSTACK-2k25/frontend/src/components/ui/GradientButton.tsx" ]; then
+if [ -f "/home/abdul/Documents/CAREER/FINFOLIO/frontend/src/components/ui/GradientButton.tsx" ]; then
     print_result 0 "GradientButton component created"
 else
     print_result 1 "GradientButton component missing"
@@ -118,7 +118,7 @@ fi
 
 # Test 10: Check LoadingSkeleton
 echo -n "Checking LoadingSkeleton component... "
-if [ -f "/home/abdul/Documents/CAREER/CAPSTACK-2k25/frontend/src/components/ui/LoadingSkeleton.tsx" ]; then
+if [ -f "/home/abdul/Documents/CAREER/FINFOLIO/frontend/src/components/ui/LoadingSkeleton.tsx" ]; then
     print_result 0 "LoadingSkeleton component created"
 else
     print_result 1 "LoadingSkeleton component missing"
@@ -126,7 +126,7 @@ fi
 
 # Test 11: Check AnimatedCounter
 echo -n "Checking AnimatedCounter component... "
-if [ -f "/home/abdul/Documents/CAREER/CAPSTACK-2k25/frontend/src/components/ui/AnimatedCounter.tsx" ]; then
+if [ -f "/home/abdul/Documents/CAREER/FINFOLIO/frontend/src/components/ui/AnimatedCounter.tsx" ]; then
     print_result 0 "AnimatedCounter component created"
 else
     print_result 1 "AnimatedCounter component missing"
@@ -134,7 +134,7 @@ fi
 
 # Test 12: Check SalaryInsights
 echo -n "Checking SalaryInsights component... "
-if [ -f "/home/abdul/Documents/CAREER/CAPSTACK-2k25/frontend/src/components/SalaryInsights.tsx" ]; then
+if [ -f "/home/abdul/Documents/CAREER/FINFOLIO/frontend/src/components/SalaryInsights.tsx" ]; then
     print_result 0 "SalaryInsights component created"
 else
     print_result 1 "SalaryInsights component missing"
@@ -146,7 +146,7 @@ echo "-----------------------------"
 
 # Test 13: Check csv-parse installed
 echo -n "Checking csv-parse dependency... "
-cd /home/abdul/Documents/CAREER/CAPSTACK-2k25/backend-api
+cd /home/abdul/Documents/CAREER/FINFOLIO/backend-api
 if npm list csv-parse > /dev/null 2>&1; then
     print_result 0 "csv-parse installed"
 else

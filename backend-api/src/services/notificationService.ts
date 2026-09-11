@@ -41,9 +41,9 @@ export const sendEmailNotification = async (data: NotificationData): Promise<{ s
     const htmlTemplate = createEmailTemplate(type, subject, message);
 
     const mailOptions = {
-      from: `"CapStack AI" <${emailConfig.auth.user}>`,
+      from: `"FinFolio AI" <${emailConfig.auth.user}>`,
       to: email,
-      subject: `[CapStack] ${subject}`,
+      subject: `[FinFolio] ${subject}`,
       html: htmlTemplate,
       priority: priority
     };
@@ -187,7 +187,7 @@ const createEmailTemplate = (type: string, subject: string, message: string): st
     </head>
     <body style="${baseStyles}">
       <div style="${headerStyles}">
-        <h1 style="margin: 0; font-size: 24px;">${getTypeIcon(type)} CapStack AI</h1>
+        <h1 style="margin: 0; font-size: 24px;">${getTypeIcon(type)} FinFolio AI</h1>
         <p style="margin: 10px 0 0 0; opacity: 0.9;">Your Personal Financial Guardian</p>
       </div>
 
@@ -201,7 +201,7 @@ const createEmailTemplate = (type: string, subject: string, message: string): st
         <div style="border-top: 1px solid #e0e0e0; padding-top: 20px; margin-top: 30px;">
           <p style="color: #666; font-size: 14px; margin: 0;">
             <strong>Why did you receive this?</strong><br>
-            You're receiving this notification because you have important financial updates from CapStack AI.
+            You're receiving this notification because you have important financial updates from FinFolio AI.
           </p>
         </div>
 
@@ -214,7 +214,7 @@ const createEmailTemplate = (type: string, subject: string, message: string): st
 
         <div style="border-top: 1px solid #e0e0e0; padding-top: 20px; margin-top: 30px; text-align: center;">
           <p style="color: #999; font-size: 12px; margin: 0;">
-            CapStack AI - Building Financial Safety Nets<br>
+            FinFolio AI - Building Financial Safety Nets<br>
             <a href="#" style="color: #667eea; text-decoration: none;">Unsubscribe</a> |
             <a href="#" style="color: #667eea; text-decoration: none;">Privacy Policy</a>
           </p>

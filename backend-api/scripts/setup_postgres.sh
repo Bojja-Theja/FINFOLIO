@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Script to set up PostgreSQL user and database for CAPSTACK
+# Script to set up PostgreSQL user and database for FINFOLIO
 
-echo "Setting up PostgreSQL for CAPSTACK..."
+echo "Setting up PostgreSQL for FINFOLIO..."
 
 # Check if PostgreSQL is running
 echo "Checking if PostgreSQL is running..."
@@ -14,6 +14,6 @@ fi
 # Create the PostgreSQL user and database
 echo "Creating PostgreSQL user and database..."
 sudo -u postgres psql -c "CREATE ROLE \"user\" WITH LOGIN PASSWORD 'password';"
-sudo -u postgres psql -c "CREATE DATABASE capstack OWNER \"user\";"
+sudo -u postgres psql -c "CREATE DATABASE finfolio OWNER \"user\";"
 
 echo "PostgreSQL user and database setup complete!"

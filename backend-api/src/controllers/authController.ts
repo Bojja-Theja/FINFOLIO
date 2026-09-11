@@ -22,7 +22,7 @@ export const guestLogin = async (req: Request, res: Response) => {
   try {
     // Generate unique guest ID
     const guestId = `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    const guestEmail = `${guestId}@guest.capstack.local`;
+    const guestEmail = `${guestId}@guest.finfolio.local`;
     const guestName = 'Guest User';
 
     // Create temporary guest user with default PIN

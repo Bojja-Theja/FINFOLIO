@@ -2,7 +2,7 @@
 
 # Comprehensive script to set up PostgreSQL and start the backend server
 
-echo "🚀 Setting up CAPSTACK environment..."
+echo "🚀 Setting up FINFOLIO environment..."
 
 # Check if PostgreSQL is running
 echo "🔍 Checking if PostgreSQL is running..."
@@ -14,7 +14,7 @@ fi
 # Create the PostgreSQL user and database
 echo "🔧 Creating PostgreSQL user and database..."
 sudo -u postgres psql -c "CREATE ROLE \"user\" WITH LOGIN PASSWORD 'password';"
-sudo -u postgres psql -c "CREATE DATABASE capstack OWNER \"user\";"
+sudo -u postgres psql -c "CREATE DATABASE finfolio OWNER \"user\";"
 
 # Update PostgreSQL configuration for password authentication
 echo "📝 Updating PostgreSQL configuration for password authentication..."
@@ -38,6 +38,6 @@ cd backend-api && npm run dev &
 # Wait for the backend server to start
 sleep 5
 
-echo "✅ CAPSTACK environment setup complete!"
+echo "✅ FINFOLIO environment setup complete!"
 echo "🌐 Frontend is running at http://localhost:3000"
 echo "🌐 Backend is running at http://localhost:3001"

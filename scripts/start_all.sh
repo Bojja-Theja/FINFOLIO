@@ -43,7 +43,7 @@ fi
 ML_PYTHON=""
 for candidate in \
     "$ROOT_DIR/.venv/bin/python" \
-    "$ROOT_DIR/../CAPSTACK/.venv/bin/python" \
+    "$ROOT_DIR/../FINFOLIO/.venv/bin/python" \
     "$(command -v python3 2>/dev/null || true)"; do
   if [[ -x "$candidate" ]] && "$candidate" -c "import uvicorn" 2>/dev/null; then
     ML_PYTHON="$candidate"

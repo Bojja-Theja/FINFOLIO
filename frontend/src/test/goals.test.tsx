@@ -20,15 +20,14 @@ describe('Goals', () => {
 
     test('shows summary cards with goal statistics', () => {
         render(<Goals />);
-        expect(screen.getByText(/Total Goals/i)).toBeTruthy();
-        const targetAmount = screen.getAllByText(/Target Amount/i);
-        expect(targetAmount.length).toBeGreaterThan(0);
-        expect(screen.getByText(/Saved So Far/i)).toBeTruthy();
-        expect(screen.getByText(/Overall Progress/i)).toBeTruthy();
+        expect(screen.getByText(/Total Active Goals/i)).toBeTruthy();
+        expect(screen.getByText(/Total Goal Target/i)).toBeTruthy();
+        expect(screen.getByText(/Total Accumulated/i)).toBeTruthy();
+        expect(screen.getByText(/Overall Goal Completion/i)).toBeTruthy();
     });
 
-    test('displays AI recommendations', () => {
+    test('displays refresh button', () => {
         render(<Goals />);
-        expect(screen.getByText(/Goal Achievement Recommendations/i)).toBeTruthy();
+        expect(screen.getByText(/Refresh/i)).toBeTruthy();
     });
 });

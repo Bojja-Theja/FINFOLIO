@@ -1,6 +1,6 @@
-# 🚀 CAPSTACK Frontend - AI-Powered Finance Dashboard
+# 🚀 FINFOLIO Frontend - AI-Powered Finance Dashboard
 
-A modern, responsive, and secure Next.js frontend for the CAPSTACK AI-Powered Personal Finance Platform. Built with TypeScript, Material-UI, and enterprise-grade security features.
+A modern, responsive, and secure Next.js frontend for the FINFOLIO AI-Powered Personal Finance Platform. Built with TypeScript, Material-UI, and enterprise-grade security features.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-14+-black.svg)](https://nextjs.org/)
@@ -98,8 +98,8 @@ frontend/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/CAPSTACK-2k25.git
-   cd CAPSTACK-2k25/frontend
+   git clone https://github.com/yourusername/FINFOLIO.git
+   cd FINFOLIO/frontend
    ```
 
 2. **Install dependencies**
@@ -294,10 +294,10 @@ npm run start
 ### Docker Deployment
 ```bash
 # Build Docker image
-docker build -t capstack-frontend .
+docker build -t finfolio-frontend .
 
 # Run container
-docker run -p 3000:3000 capstack-frontend
+docker run -p 3000:3000 finfolio-frontend
 ```
 
 ### Vercel Deployment (Recommended)
@@ -310,7 +310,7 @@ docker run -p 3000:3000 capstack-frontend
 ## 🔄 API Integration
 
 ### Backend API
-The frontend integrates with the CAPSTACK backend API:
+The frontend integrates with the FINFOLIO backend API:
 
 ```typescript
 // Example API call

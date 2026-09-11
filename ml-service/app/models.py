@@ -1,5 +1,5 @@
 """
-CAPSTACK ML Models - Advanced Machine Learning Models
+FINFOLIO ML Models - Advanced Machine Learning Models
 Trained models for financial prediction and risk assessment
 """
 

@@ -1,5 +1,5 @@
 """
-CAPSTACK ML Service - Advanced Financial AI Engine
+FINFOLIO ML Service - Advanced Financial AI Engine
 Production-ready ML service with model management and evaluation
 """
 
@@ -407,7 +407,7 @@ async def health_check():
 def read_root():
     """Root endpoint - API information."""
     return {
-        "service": "CAPSTACK ML Service",
+        "service": "FINFOLIO ML Service",
         "version": "2.0.0",
         "status": "operational",
         "endpoints": {

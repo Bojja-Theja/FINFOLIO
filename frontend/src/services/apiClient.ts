@@ -13,11 +13,11 @@ function getApiBackendUrl(): string {
     if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
       return "http://localhost:3001";
     }
-    return "https://capstack-2k25-backend.onrender.com";
+    return "https://finfolio-backend.onrender.com";
   }
 
   // 3. Server-side default
-  return "https://capstack-2k25-backend.onrender.com";
+  return "https://finfolio-backend.onrender.com";
 }
 
 // Determine ML URL based on environment
@@ -33,11 +33,11 @@ function getMLUrl(): string {
     if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
       return "http://localhost:8000";
     }
-    return "https://capstack-ml.onrender.com";
+    return "https://finfolio-ml.onrender.com";
   }
 
   // 3. Server-side default
-  return "https://capstack-ml.onrender.com";
+  return "https://finfolio-ml.onrender.com";
 }
 
 const API_BASE_URL = getApiBackendUrl();

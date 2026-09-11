@@ -1,4 +1,4 @@
--- CAPSTACK Database Schema
+-- FINFOLIO Database Schema
 -- Comprehensive financial wellness platform database
 
 -- Users and Authentication

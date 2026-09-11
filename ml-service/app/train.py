@@ -1,5 +1,5 @@
 """
-CAPSTACK ML Model Training Pipeline
+FINFOLIO ML Model Training Pipeline
 Generates synthetic training data and trains all ML models
 """
 
@@ -282,7 +282,7 @@ def train_savings_model():
 def main():
     """Main training pipeline"""
     logger.info("\n%s", "=" * 80)
-    logger.info("CAPSTACK ML MODEL TRAINING PIPELINE")
+    logger.info("FINFOLIO ML MODEL TRAINING PIPELINE")
     logger.info("\n%s", "=" * 80)
 
     try:

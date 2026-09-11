@@ -1,9 +1,9 @@
--- CAPSTACK Demo Data
+-- FINFOLIO Demo Data
 -- Comprehensive demo dataset for testing and demonstration
 
 -- Users
 INSERT INTO users (id, email, password, name, created_at) VALUES
-(1, 'demo@capstack.com', '$2b$10$hashed_password_demo', 'Demo User', '2024-01-01 00:00:00'),
+(1, 'demo@finfolio.com', '$2b$10$hashed_password_demo', 'Demo User', '2024-01-01 00:00:00'),
 (2, 'john.doe@email.com', '$2b$10$hashed_password_john', 'John Doe', '2024-01-15 00:00:00'),
 (3, 'sarah.smith@email.com', '$2b$10$hashed_password_sarah', 'Sarah Smith', '2024-02-01 00:00:00');
 

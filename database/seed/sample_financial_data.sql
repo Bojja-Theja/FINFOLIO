@@ -1,9 +1,9 @@
--- Sample Financial Data for CAPSTACK
+-- Sample Financial Data for FINFOLIO
 -- Based on the master prompt requirements
 
 -- Insert sample user
 INSERT INTO users (email, pin, name, created_at, updated_at) VALUES
-('demo@capstack.com', '1234', 'Demo User', NOW(), NOW())
+('demo@finfolio.com', '1234', 'Demo User', NOW(), NOW())
 ON CONFLICT (email) DO NOTHING;
 
 -- Get user ID

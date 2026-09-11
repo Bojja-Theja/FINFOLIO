@@ -106,7 +106,7 @@ export default function Login() {
           Welcome Back
         </Typography>
         <Typography variant="body1" color="text.secondary" align="center" sx={{ mb: 4 }}>
-          Sign in to your CAPSTACK account
+          Sign in to your FINFOLIO account
         </Typography>
 
         {error && (

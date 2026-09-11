@@ -46,8 +46,8 @@ const allowedOrigins = [
   "http://localhost:3001",
   "http://127.0.0.1:3000",
   "http://127.0.0.1:3001",
-  "https://capstack-2k25-frontend.onrender.com",
-  "https://capstack-2k25.onrender.com",
+  "https://finfolio-frontend.onrender.com",
+  "https://finfolio.onrender.com",
   // Add environment variable support for custom deployment URLs
   process.env.FRONTEND_URL || "",
 ];
@@ -161,7 +161,7 @@ app.use("/api", apiRouter);
 // Root endpoint
 app.get("/", (req, res) => {
   res.json({
-    message: "CAPSTACK Backend API",
+    message: "FINFOLIO Backend API",
     version: "1.0.0",
     status: "running",
     endpoints: {
@@ -195,58 +195,66 @@ if (config.sentryDsn) {
 // ----------------------------------
 // Server Startup
 // ----------------------------------
-// Initialize cache connection
-(async () => {
-  try {
-    if (process.env.REDIS_ENABLED !== 'false') {
-      await cacheService.connect();
-      logger.info('✅ Redis cache connected');
-    } else {
-      logger.info('ℹ️  Redis cache disabled');
+let server: any;
+if (process.env.NODE_ENV !== 'test') {
+  (async () => {
+    try {
+      if (process.env.REDIS_ENABLED === 'true') {
+        await cacheService.connect();
+        logger.info('✅ Redis cache connected');
+      } else {
+        logger.info('ℹ️  Redis cache disabled');
+      }
+    } catch (error) {
+      logger.warn('⚠️  Redis connection failed, running without cache');
+      logger.warn(`Redis error: ${error}`);
     }
-  } catch (error) {
-    logger.warn('⚠️  Redis connection failed, running without cache');
-    logger.warn(`Redis error: ${error}`);
-  }
-})();
+  })();
 
-const server = app.listen(PORT, () => {
-  logger.info(`✅ Server running on port ${PORT}`);
-  logger.info(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  logger.info(`🌍 Allowed origins: ${allowedOrigins.join(', ')}`);
-  logger.info(`⚡ Performance monitoring enabled`);
-  logger.info(`🗜️  Response compression enabled`);
-});
+  server = app.listen(PORT, () => {
+    logger.info(`✅ Server running on port ${PORT}`);
+    logger.info(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    logger.info(`🌍 Allowed origins: ${allowedOrigins.join(', ')}`);
+    logger.info(`⚡ Performance monitoring enabled`);
+    logger.info(`🗜️  Response compression enabled`);
+  });
+}
 
 // Graceful shutdown
 process.on("SIGTERM", () => {
   logger.warn("SIGTERM received, shutting down gracefully");
-  server.close(async () => {
-    // Disconnect from Redis
-    try {
-      await cacheService.disconnect();
-      logger.info("Redis disconnected");
-    } catch (error) {
-      logger.warn("Error disconnecting Redis");
-    }
-    logger.info("Server shut down");
+  if (server) {
+    server.close(async () => {
+      try {
+        await cacheService.disconnect();
+        logger.info("Redis disconnected");
+      } catch (error) {
+        logger.warn("Error disconnecting Redis");
+      }
+      logger.info("Server shut down");
+      process.exit(0);
+    });
+  } else {
     process.exit(0);
-  });
+  }
 });
 
 process.on("SIGINT", () => {
   logger.warn("SIGINT received, shutting down gracefully");
-  server.close(async () => {
-    // Disconnect from Redis
-    try {
-      await cacheService.disconnect();
-      logger.info("Redis disconnected");
-    } catch (error) {
-      logger.warn("Error disconnecting Redis");
-    }
-    logger.info("Server shut down");
+  if (server) {
+    server.close(async () => {
+      try {
+        await cacheService.disconnect();
+        logger.info("Redis disconnected");
+      } catch (error) {
+        logger.warn("Error disconnecting Redis");
+      }
+      logger.info("Server shut down");
+      process.exit(0);
+    });
+  } else {
     process.exit(0);
-  });
+  }
 });
 
 // Unhandled promise rejection

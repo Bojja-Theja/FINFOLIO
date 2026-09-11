@@ -169,7 +169,7 @@ export default OnboardingTour;
 // Example usage:
 export const defaultTourSteps: TourStep[] = [
     {
-        title: 'Welcome to CapStack! 🎉',
+        title: 'Welcome to FinFolio! 🎉',
         description: 'Your AI-powered personal finance platform. Let\'s take a quick tour to get you started.',
     },
     {

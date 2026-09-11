@@ -4,7 +4,7 @@ const axios = require('axios');
 const BASE_URL = 'http://localhost:3001';
 
 async function testEndpoints() {
-    console.log('🧪 Testing CAPSTACK API Endpoints\n');
+    console.log('🧪 Testing FINFOLIO API Endpoints\n');
 
     const tests = [
         {

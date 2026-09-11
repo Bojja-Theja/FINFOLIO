@@ -1,6 +1,6 @@
-# 🚀 CAPSTACK Backend API - Enterprise Financial Platform
+# 🚀 FINFOLIO Backend API - Enterprise Financial Platform
 
-A production-grade **Node.js + TypeScript + Express** backend powering the CAPSTACK AI-Powered Personal Finance Platform. Built with enterprise security, scalability, and comprehensive financial intelligence capabilities.
+A production-grade **Node.js + TypeScript + Express** backend powering the FINFOLIO AI-Powered Personal Finance Platform. Built with enterprise security, scalability, and comprehensive financial intelligence capabilities.
 
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
@@ -48,8 +48,8 @@ A production-grade **Node.js + TypeScript + Express** backend powering the CAPST
 
 1. **🔽 Clone the Repository**
    ```bash
-   git clone https://github.com/yourusername/CAPSTACK-2k25.git
-   cd CAPSTACK-2k25/backend-api
+   git clone https://github.com/yourusername/FINFOLIO.git
+   cd FINFOLIO/backend-api
    ```
 
 2. **📦 Install Dependencies**
@@ -108,7 +108,7 @@ NODE_ENV=development
 LOG_LEVEL=info
 
 # Database Configuration
-DATABASE_URL=postgresql://user:password@localhost:5432/capstack
+DATABASE_URL=postgresql://user:password@localhost:5432/finfolio
 REDIS_URL=redis://localhost:6379
 
 # Security Configuration
@@ -454,27 +454,27 @@ CMD ["npm", "start"]
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: capstack-backend
+  name: finfolio-backend
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: capstack-backend
+      app: finfolio-backend
   template:
     metadata:
       labels:
-        app: capstack-backend
+        app: finfolio-backend
     spec:
       containers:
       - name: backend
-        image: capstack-backend:latest
+        image: finfolio-backend:latest
         ports:
         - containerPort: 3000
         env:
         - name: DATABASE_URL
           valueFrom:
             secretKeyRef:
-              name: capstack-secrets
+              name: finfolio-secrets
               key: database-url
         resources:
           requests:
@@ -619,9 +619,9 @@ const calculateFinances = async (data: FinancialData) => {
 ## 📞 Support & Contact
 
 ### 🐛 Issue Reporting
-- **Bug Reports**: [GitHub Issues](https://github.com/yourusername/CAPSTACK-2k25/issues)
-- **Feature Requests**: [GitHub Discussions](https://github.com/yourusername/CAPSTACK-2k25/discussions)
-- **Security Issues**: security@capstack.com
+- **Bug Reports**: [GitHub Issues](https://github.com/yourusername/FINFOLIO/issues)
+- **Feature Requests**: [GitHub Discussions](https://github.com/yourusername/FINFOLIO/discussions)
+- **Security Issues**: security@finfolio.com
 
 ### 👥 Development Team
 - **Backend Lead**: Shaik Muzkeer
@@ -645,7 +645,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](../../LIC
 
 ## 🌟 Ready to Power Your Financial Platform?
 
-[![](https://img.shields.io/badge/Get%20Started-%E2%9E%A2-4CAF50?style=for-the-badge&logo=node.js&logoColor=white)](https://github.com/yourusername/CAPSTACK-2k25)
+[![](https://img.shields.io/badge/Get%20Started-%E2%9E%A2-4CAF50?style=for-the-badge&logo=node.js&logoColor=white)](https://github.com/yourusername/FINFOLIO)
 
 ---
 

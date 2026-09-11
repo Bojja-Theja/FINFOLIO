@@ -14,11 +14,11 @@ function getBackendUrl(): string {
       return "http://localhost:3001";
     }
     // Production: use the domain's protocol and add backend subdomain
-    return "https://capstack-2k25-backend.onrender.com";
+    return "https://finfolio-backend.onrender.com";
   }
 
   // 3. Server-side default (SSR)
-  return "https://capstack-2k25-backend.onrender.com";
+  return "https://finfolio-backend.onrender.com";
 }
 
 const BACKEND_BASE_URL = getBackendUrl();

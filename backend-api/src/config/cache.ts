@@ -87,7 +87,7 @@ class CacheService {
   }
 
   private getCacheKey(prefix: string, key: string): string {
-    return `capstack:${prefix}:${key}`;
+    return `finfolio:${prefix}:${key}`;
   }
 
   async get<T>(prefix: string, key: string): Promise<T | null> {
@@ -149,7 +149,7 @@ class CacheService {
     }
 
     try {
-      const keys = await this.client.keys(`capstack:${pattern}`);
+      const keys = await this.client.keys(`finfolio:${pattern}`);
       if (keys.length > 0) {
         await this.client.del(keys);
       }

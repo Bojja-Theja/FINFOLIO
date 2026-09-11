@@ -176,7 +176,7 @@ export default function Allocation() {
       setError(null);
       setRequiresRegistration(false);
 
-      const backendUrl = api.defaults.baseURL || 'https://capstack-2k25-backend.onrender.com';
+      const backendUrl = api.defaults.baseURL || 'https://finfolio-backend.onrender.com';
       const endpoint = '/finance/asset-allocation';
       const fullUrl = new URL(endpoint, backendUrl).toString();
       console.log('Fetching allocation from:', fullUrl);
@@ -228,11 +228,11 @@ export default function Allocation() {
 
       // Handle connection errors
       if (err.code === 'ECONNABORTED' || err.code === 'ENOTFOUND' || err.message?.includes('timeout')) {
-        setError(`Connection Error: Unable to reach the backend server at ${api.defaults.baseURL || 'https://capstack-2k25-backend.onrender.com'}. The server may be starting up. Please try again in a moment.`);
+        setError(`Connection Error: Unable to reach the backend server at ${api.defaults.baseURL || 'https://finfolio-backend.onrender.com'}. The server may be starting up. Please try again in a moment.`);
       } else if (err.response?.status === 404) {
         // 404 error - endpoint not found
         const url = err.config?.url || '/finance/asset-allocation';
-        const baseUrl = err.config?.baseURL || api.defaults.baseURL || 'https://capstack-2k25-backend.onrender.com';
+        const baseUrl = err.config?.baseURL || api.defaults.baseURL || 'https://finfolio-backend.onrender.com';
         console.error("404 Debug Info:", {
           requestUrl: url,
           baseURL: baseUrl,
@@ -247,7 +247,7 @@ export default function Allocation() {
       } else if (err.response?.status >= 500) {
         setError(`Server Error (${err.response?.status}): The backend server encountered an error. Please try again.`);
       } else {
-        setError(err.message || `Unknown error occurred. Please ensure the backend is running at ${api.defaults.baseURL || 'https://capstack-2k25-backend.onrender.com'}`);
+        setError(err.message || `Unknown error occurred. Please ensure the backend is running at ${api.defaults.baseURL || 'https://finfolio-backend.onrender.com'}`);
       }
 
       // Try sample.json only for non-auth errors

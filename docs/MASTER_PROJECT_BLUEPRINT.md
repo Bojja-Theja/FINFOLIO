@@ -1,4 +1,4 @@
-# AI-Driven Personal Financial Command Center - CAPSTACK
+# AI-Driven Personal Financial Command Center - FINFOLIO
 
 ## Complete System Architecture & Implementation
 

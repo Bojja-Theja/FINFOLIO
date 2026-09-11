@@ -121,7 +121,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>CapStack | The Smart Financial Safety Net</title>
+        <title>FinFolio | The Smart Financial Safety Net</title>
         <meta name="description" content="AI-powered financial safety net for unstable markets. Automate savings, monitor spending, survive financially with AI insights." />
       </Head>
 
@@ -167,7 +167,7 @@ export default function Home() {
                 </Typography>
 
                 <Typography variant="body1" color="text.secondary" sx={{ fontSize: '1.1rem', lineHeight: 1.8 }}>
-                  In an era of layoffs and inflation, CapStack acts as your personal Financial Data Scientist. We automate your emergency funds, block risky spending, and stabilize your future.
+                  In an era of layoffs and inflation, FinFolio acts as your personal Financial Data Scientist. We automate your emergency funds, block risky spending, and stabilize your future.
                 </Typography>
 
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
@@ -199,7 +199,7 @@ export default function Home() {
                 justifyContent: 'center',
                 color: 'white'
               }}>
-                <Typography variant="h4" fontWeight="bold">CAPSTACK DEMO</Typography>
+                <Typography variant="h4" fontWeight="bold">FINFOLIO DEMO</Typography>
               </Box>
             </Grid>
           </Grid>

@@ -8,7 +8,7 @@ async function seedDatabase() {
         console.log('🌱 Starting database seeding...');
 
         // 1. Seed Demo User
-        const demoEmail = 'demo@capstack.com';
+        const demoEmail = 'demo@finfolio.com';
         const passwordHash = await bcrypt.hash('password123', 10);
 
         // Check if user exists

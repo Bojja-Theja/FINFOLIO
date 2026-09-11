@@ -1,6 +1,6 @@
-# 🧠 CAPSTACK ML Service - AI Risk & Allocation Engine
+# 🧠 FINFOLIO ML Service - AI Risk & Allocation Engine
 
-Advanced FastAPI-based machine learning service powering CAPSTACK's financial intelligence, risk assessment, and predictive analytics capabilities. Built with production-grade ML models and real-time inference capabilities.
+Advanced FastAPI-based machine learning service powering FINFOLIO's financial intelligence, risk assessment, and predictive analytics capabilities. Built with production-grade ML models and real-time inference capabilities.
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-009688.svg)](https://fastapi.tiangolo.com/)
 [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/)
@@ -117,8 +117,8 @@ ml-service/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/CAPSTACK-2k25.git
-   cd CAPSTACK-2k25/ml-service
+   git clone https://github.com/yourusername/FINFOLIO.git
+   cd FINFOLIO/ml-service
    ```
 
 2. **Create virtual environment**
@@ -170,7 +170,7 @@ Create a `.env` file in the root directory:
 
 ```env
 # Service Configuration
-SERVICE_NAME=capstack-ml-service
+SERVICE_NAME=finfolio-ml-service
 SERVICE_VERSION=1.0.0
 DEBUG=false
 LOG_LEVEL=INFO
@@ -344,10 +344,10 @@ python scripts/benchmark_models.py
 ### Docker Deployment
 ```bash
 # Build Docker image
-docker build -t capstack-ml-service .
+docker build -t finfolio-ml-service .
 
 # Run container
-docker run -p 8000:8000 --env-file .env capstack-ml-service
+docker run -p 8000:8000 --env-file .env finfolio-ml-service
 ```
 
 ### Kubernetes Deployment
@@ -355,20 +355,20 @@ docker run -p 8000:8000 --env-file .env capstack-ml-service
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: capstack-ml-service
+  name: finfolio-ml-service
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: capstack-ml-service
+      app: finfolio-ml-service
   template:
     metadata:
       labels:
-        app: capstack-ml-service
+        app: finfolio-ml-service
     spec:
       containers:
       - name: ml-service
-        image: capstack-ml-service:latest
+        image: finfolio-ml-service:latest
         ports:
         - containerPort: 8000
         env:

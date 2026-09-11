@@ -269,7 +269,7 @@ export default function Onboarding() {
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Paper sx={{ p: 4 }}>
-        <Typography variant="h4" align="center">Welcome to CapStack</Typography>
+        <Typography variant="h4" align="center">Welcome to FinFolio</Typography>
         <Typography variant="h6" align="center" color="text.secondary" sx={{ mb: 4 }}>
           Let's set up your financial profile to get personalized insights
         </Typography>
