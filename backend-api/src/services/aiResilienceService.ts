@@ -1,12 +1,12 @@
 import axios from 'axios';
-import { DatabaseService } from './databaseService';
-import { WalletService } from './walletService';
-import { FinancialGoalService } from './financialGoalService';
-import { EmergencyService } from './emergencyService';
-import { AccountabilityService } from './accountabilityService';
-import { calculateHealthScore } from './healthScoreService';
-import { calculateSurvivalMonths } from './survivalService';
-import { logger } from '../utils/logger';
+import { DatabaseService } from './databaseService.js';
+import { WalletService } from './walletService.js';
+import { FinancialGoalService } from './financialGoalService.js';
+import { EmergencyService } from './emergencyService.js';
+import { AccountabilityService } from './accountabilityService.js';
+import { calculateHealthScore } from './healthScoreService.js';
+import { calculateSurvivalMonths } from './survivalService.js';
+import { logger } from '../utils/logger.js';
 
 export interface ResilienceDeterministicBase {
   userId: number;
@@ -110,7 +110,7 @@ export class AIResilienceService {
 
     const totalGoalsCount = goals.length;
     const goalsOnTrackCount = goals.filter(
-      (g) => g.calculations.status === 'on_track' || g.calculations.status === 'completed'
+      (g) => g.calculations.status === 'in_progress' || g.calculations.status === 'completed' || g.calculations.status === 'nearly_there'
     ).length;
     const totalGoalTarget = goals.reduce((sum, g) => sum + g.targetAmount, 0);
     const totalGoalSaved = goals.reduce((sum, g) => sum + g.currentAmount, 0);
@@ -120,7 +120,7 @@ export class AIResilienceService {
     );
 
     const activePartners = partners.filter((p) => p.status === 'active');
-    const activeRules = rules.filter((r) => r.isActive !== false);
+    const activeRules = rules;
 
     const deterministicBase: ResilienceDeterministicBase = {
       userId,
@@ -175,7 +175,7 @@ export class AIResilienceService {
     }
 
     // Check goal timeline lag
-    const delayedGoals = goals.filter((g) => g.calculations.status === 'behind');
+    const delayedGoals = goals.filter((g) => g.calculations.status === 'not_started' && g.currentAmount > 0);
     if (delayedGoals.length > 0) {
       const topDelayed = delayedGoals[0];
       anomalies.push({
@@ -183,7 +183,7 @@ export class AIResilienceService {
         type: 'goal_trajectory',
         severity: 'notice',
         observation: `Goal "${topDelayed.name}" is currently pacing behind its target date at the current savings allocation.`,
-        recommendation: `Allocating an additional $${Math.max(25, Math.round(topDelayed.calculations.monthlyContributionNeeded * 0.15))}/month will bring this goal back on track.`,
+        recommendation: `Allocating an additional $${Math.max(25, Math.round(topDelayed.calculations.monthlySavingsNeeded * 0.15))}/month will bring this goal back on track.`,
       });
     }
 

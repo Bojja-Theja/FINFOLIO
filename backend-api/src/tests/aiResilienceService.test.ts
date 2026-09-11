@@ -1,7 +1,7 @@
-import { AIResilienceService } from '../services/aiResilienceService';
-import { DatabaseService } from '../services/databaseService';
-import { WalletService } from '../services/walletService';
-import { FinancialGoalService } from '../services/financialGoalService';
+import { AIResilienceService } from '../services/aiResilienceService.js';
+import { DatabaseService } from '../services/databaseService.js';
+import { WalletService } from '../services/walletService.js';
+import { FinancialGoalService } from '../services/financialGoalService.js';
 
 describe('AIResilienceService', () => {
   const testUserId = 88;

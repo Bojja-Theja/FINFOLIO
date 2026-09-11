@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { DatabaseService } from '../services/databaseService';
+import { DatabaseService } from '../services/databaseService.js';
 import {
   buildActionPlan,
   buildCashReservePlan,
@@ -12,7 +12,7 @@ import {
   buildSavingsGoalPlan,
   calculateBudgetHealth,
   type FinancePlanningInput,
-} from '../services/financialPlanningService';
+} from '../services/financialPlanningService.js';
 
 const demoProfile: FinancePlanningInput = {
   monthlyIncome: 52000,

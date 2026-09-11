@@ -1,6 +1,6 @@
-import { DatabaseService } from './databaseService';
-import { Wallet, WalletTransaction } from '../models/Wallet';
-import { logger } from '../utils/logger';
+import { DatabaseService } from './databaseService.js';
+import { Wallet, WalletTransaction } from '../models/Wallet.js';
+import { logger } from '../utils/logger.js';
 
 export class WalletService {
   /**

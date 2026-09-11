@@ -8,7 +8,7 @@ import {
   enforceDisciplineProtocol,
   checkSpendingLimit,
   autoSaveIncome
-} from '../services/savingsService';
+} from '../services/savingsService.js';
 
 export const lock = async (req: Request, res: Response) => {
   const userId = (req as any).userId;
@@ -31,10 +31,11 @@ export const getStatus = async (req: Request, res: Response) => {
   res.json(result);
 };
 
-export const createPlan = async (req: Request, res: Response) => {
+export const createPlan = async (req: Request, res: Response): Promise<void> => {
   const userId = (req as any).userId;
   if (!userId) {
-    return res.status(401).json({ error: 'Authentication required to create savings plans' });
+    res.status(401).json({ error: 'Authentication required to create savings plans' });
+    return;
   }
   
   try {
@@ -42,9 +43,10 @@ export const createPlan = async (req: Request, res: Response) => {
     
     // Validate input
     if (!planData.name || !planData.target_amount) {
-      return res.status(400).json({ 
+      res.status(400).json({ 
         error: 'Name and target amount are required' 
       });
+      return;
     }
 
     const result = await createSavingsPlan(userId, planData);

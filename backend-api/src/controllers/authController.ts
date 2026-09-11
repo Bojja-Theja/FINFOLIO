@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { config } from '../config/env';
-import { DatabaseService } from '../services/databaseService';
+import { config } from '../config/env.js';
+import { DatabaseService } from '../services/databaseService.js';
 
 export const verify = async (req: Request, res: Response) => {
   try {

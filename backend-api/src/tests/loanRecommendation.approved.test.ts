@@ -1,4 +1,4 @@
-import { buildLoanRecommendation } from '../services/loanRecommendationService';
+import { buildLoanRecommendation } from '../services/loanRecommendationService.js';
 
 describe('loanRecommendationService approved profile', () => {
   test('returns approved decision for strong borrower profile', async () => {

@@ -10,7 +10,7 @@ import {
   buildRiskProfileSummary,
   buildSavingsGoalPlan,
   calculateBudgetHealth,
-} from '../services/financialPlanningService';
+} from '../services/financialPlanningService.js';
 
 const strongProfile = {
   monthlyIncome: 120000,

@@ -11,7 +11,7 @@ import {
   getCashFlow,
   getDebtRecommendation,
   getLoanRecommendation,
-} from "../controllers/financeController";
+} from "../controllers/financeController.js";
 import {
   getActionPlan,
   getBudgetHealth,
@@ -23,16 +23,16 @@ import {
   getIncomeStabilitySummary,
   getRiskProfileSummary,
   getSavingsGoalPlan,
-} from "../controllers/financialPlanningController";
+} from "../controllers/financialPlanningController.js";
 import {
   sendAlert,
   sendAchievementNotification,
-} from "../services/notificationService";
-import { generateComprehensiveInsights } from "../services/insightsService";
-import { AssetAllocationService } from "../services/assetAllocationService";
-import { EmergencyFundService } from "../services/emergencyFundService";
-import { DatabaseService } from "../services/databaseService";
-import { optionalAuthMiddleware, requireAuthMiddleware } from "../middleware/optionalAuthMiddleware";
+} from "../services/notificationService.js";
+import { generateComprehensiveInsights } from "../services/insightsService.js";
+import { AssetAllocationService } from "../services/assetAllocationService.js";
+import { EmergencyFundService } from "../services/emergencyFundService.js";
+import { DatabaseService } from "../services/databaseService.js";
+import { optionalAuthMiddleware, requireAuthMiddleware } from "../middleware/optionalAuthMiddleware.js";
 
 const router = Router();
 
@@ -44,12 +44,12 @@ router.get("/healthscore", optionalAuthMiddleware, getHealthScore);
 router.get("/survival", optionalAuthMiddleware, getSurvival);
 router.get("/incomescore", optionalAuthMiddleware, getIncomeScore);
 
-router.get("/insights", optionalAuthMiddleware, async (req, res) => {
+router.get("/insights", optionalAuthMiddleware, async (req, res): Promise<void> => {
   const userId = (req as any).userId;
   const isGuest = (req as any).isGuest;
 
   if (!userId || isGuest) {
-    return res.json({
+    res.json({
       alerts: [
         {
           id: "1",
@@ -109,6 +109,7 @@ router.get("/insights", optionalAuthMiddleware, async (req, res) => {
       isGuest: true,
       note: "Demo insights for guest users. Sign up to see personalized analytics.",
     });
+    return;
   }
 
   const result = await generateComprehensiveInsights(userId);
@@ -118,7 +119,7 @@ router.get("/insights", optionalAuthMiddleware, async (req, res) => {
 /* -------------------------------------------
    Asset Allocation Route (Advanced Feature)
 -------------------------------------------- */
-router.get("/asset-allocation", optionalAuthMiddleware, async (req, res) => {
+router.get("/asset-allocation", optionalAuthMiddleware, async (req, res): Promise<void> => {
   try {
     const userId = (req as any).userId;
     const isGuest = (req as any).isGuest;
@@ -161,7 +162,7 @@ router.get("/asset-allocation", optionalAuthMiddleware, async (req, res) => {
         stabilityIndex: 70,
       };
 
-      return res.json({
+      res.json({
         allocation: {
           sipPercentage: allocation.sipPercentage,
           stocksPercentage: allocation.stocksPercentage,
@@ -175,6 +176,7 @@ router.get("/asset-allocation", optionalAuthMiddleware, async (req, res) => {
         isGuest: true,
         note: "Demo allocation shown. Create an account to save your personalized plan.",
       });
+      return;
     }
 
     const existingAllocation = await DatabaseService.getAssetAllocation(userId);
@@ -212,7 +214,7 @@ router.get("/asset-allocation", optionalAuthMiddleware, async (req, res) => {
         stabilityIndex: 0,
       };
 
-      return res.json({
+      res.json({
         allocation: {
           sipPercentage: existingAllocation.sipPercentage,
           stocksPercentage: existingAllocation.stocksPercentage,
@@ -230,6 +232,7 @@ router.get("/asset-allocation", optionalAuthMiddleware, async (req, res) => {
         },
         formulas,
       });
+      return;
     }
 
     const userData = await DatabaseService.getUserFinancialData(userId);
@@ -271,7 +274,7 @@ router.get("/asset-allocation", optionalAuthMiddleware, async (req, res) => {
         stabilityIndex: 70,
       };
 
-      return res.json({
+      res.json({
         allocation: {
           sipPercentage: allocation.sipPercentage,
           stocksPercentage: allocation.stocksPercentage,
@@ -285,6 +288,7 @@ router.get("/asset-allocation", optionalAuthMiddleware, async (req, res) => {
         requiresOnboarding: true,
         note: "Complete your profile to get personalized allocation recommendations.",
       });
+      return;
     }
 
     const allocation =
@@ -356,7 +360,7 @@ router.get("/asset-allocation", optionalAuthMiddleware, async (req, res) => {
 /* -------------------------------------------
    Update Asset Allocation (Advanced Feature)
 -------------------------------------------- */
-router.post("/asset-allocation/update", requireAuthMiddleware, async (req, res) => {
+router.post("/asset-allocation/update", requireAuthMiddleware, async (req, res): Promise<void> => {
   try {
     const userId = (req as any).userId;
     const { allocation } = req.body;
@@ -384,9 +388,10 @@ router.post("/asset-allocation/update", requireAuthMiddleware, async (req, res) 
     const success = await DatabaseService.saveAssetAllocation(allocationData);
 
     if (!success) {
-      return res
+      res
         .status(500)
         .json({ error: "Failed to save asset allocation to database" });
+      return;
     }
 
     res.json({
@@ -403,7 +408,7 @@ router.post("/asset-allocation/update", requireAuthMiddleware, async (req, res) 
 /* -------------------------------------------
    Emergency Fund Routes (Advanced Feature)
 -------------------------------------------- */
-router.get("/emergency-status", optionalAuthMiddleware, async (req, res) => {
+router.get("/emergency-status", optionalAuthMiddleware, async (req, res): Promise<void> => {
   try {
     const userId = (req as any).userId;
     const isGuest = (req as any).isGuest;
@@ -437,7 +442,7 @@ router.get("/emergency-status", optionalAuthMiddleware, async (req, res) => {
         7
       );
 
-      return res.json({
+      res.json({
         status: emergencyStatus,
         simulations,
         optimalContribution,
@@ -450,6 +455,7 @@ router.get("/emergency-status", optionalAuthMiddleware, async (req, res) => {
         isGuest: true,
         note: "Demo emergency fund status. Sign up to save and track your own data.",
       });
+      return;
     }
 
     const existingData = await DatabaseService.getEmergencyFundData(userId);
@@ -484,7 +490,7 @@ router.get("/emergency-status", optionalAuthMiddleware, async (req, res) => {
         7
       );
 
-      return res.json({
+      res.json({
         status: emergencyStatus,
         simulations,
         optimalContribution,
@@ -497,6 +503,7 @@ router.get("/emergency-status", optionalAuthMiddleware, async (req, res) => {
         requiresOnboarding: true,
         note: "Complete your profile to see your actual emergency fund status.",
       });
+      return;
     }
 
     if (existingData) {
@@ -527,7 +534,7 @@ router.get("/emergency-status", optionalAuthMiddleware, async (req, res) => {
         7
       );
 
-      return res.json({
+      res.json({
         status: {
           currentBalance: existingData.currentBalance,
           targetMonths: existingData.targetMonths,
@@ -546,12 +553,14 @@ router.get("/emergency-status", optionalAuthMiddleware, async (req, res) => {
           "Review and adjust based on life changes",
         ],
       });
+      return;
     }
 
     if (!userFinData) {
-      return res.status(404).json({
+      res.status(404).json({
         error: "User financial data not found. Please complete your profile.",
       });
+      return;
     }
 
     const status = EmergencyFundService.calculateEmergencyFundStatus(
@@ -611,7 +620,7 @@ router.get("/emergency-status", optionalAuthMiddleware, async (req, res) => {
   }
 });
 
-router.post("/emergency-simulation", optionalAuthMiddleware, async (req, res) => {
+router.post("/emergency-simulation", optionalAuthMiddleware, async (req, res): Promise<void> => {
   try {
     const { scenario, currentBalance, monthlyExpenses, monthlyIncome } =
       req.body;
@@ -633,12 +642,13 @@ router.post("/emergency-simulation", optionalAuthMiddleware, async (req, res) =>
       const specificSimulation =
         simulations.find((s) => s.scenario === scenario) || simulations[0];
 
-      return res.json({
+      res.json({
         simulation: specificSimulation,
         allScenarios: simulations,
         isGuest: true,
         note: "Demo simulation. Sign up to run simulations on your own data.",
       });
+      return;
     }
 
     const simulations = EmergencyFundService.simulateEmergencyScenarios(
@@ -662,7 +672,7 @@ router.post("/emergency-simulation", optionalAuthMiddleware, async (req, res) =>
 /* -------------------------------------------
    Trend Analysis (Advanced Feature)
 -------------------------------------------- */
-router.get("/trends/:period", requireAuthMiddleware, async (req, res) => {
+router.get("/trends/:period", requireAuthMiddleware, async (req, res): Promise<void> => {
   try {
     const userId = (req as any).userId;
     const { period } = req.params;
@@ -691,7 +701,7 @@ router.get("/trends/:period", requireAuthMiddleware, async (req, res) => {
 /* -------------------------------------------
    SIP Calculator Route
 -------------------------------------------- */
-router.post("/sip-plan", async (req, res) => {
+router.post("/sip-plan", async (req, res): Promise<void> => {
   try {
     const { monthlyInvestment, years, expectedReturn } = req.body;
 
@@ -721,7 +731,7 @@ router.post("/sip-plan", async (req, res) => {
 /* -------------------------------------------
    Notification Routes (Advanced Feature)
 -------------------------------------------- */
-router.post("/notify/alert", requireAuthMiddleware, async (req, res) => {
+router.post("/notify/alert", requireAuthMiddleware, async (req, res): Promise<void> => {
   try {
     const { email, message, type } = req.body;
     const userId = (req as any).userId;
@@ -733,7 +743,7 @@ router.post("/notify/alert", requireAuthMiddleware, async (req, res) => {
   }
 });
 
-router.post("/notify/achievement", requireAuthMiddleware, async (req, res) => {
+router.post("/notify/achievement", requireAuthMiddleware, async (req, res): Promise<void> => {
   try {
     const { email, achievement, details } = req.body;
     const userId = (req as any).userId;

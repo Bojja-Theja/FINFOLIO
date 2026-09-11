@@ -1,0 +1,863 @@
+{
+  "generatedAt": "2026-09-11",
+  "datasets": {
+    "worldBankUnemployment": {
+      "indicator": "SL.UEM.TOTL.ZS (India Unemployment % of Total Labor Force)",
+      "dataPoints": 34,
+      "startYear": 1991,
+      "endYear": 2024,
+      "latest": {
+        "year": 2024,
+        "ratePct": 4.173
+      },
+      "historicalAveragePct": 7.27,
+      "recent10YrAveragePct": 6.44,
+      "peak": {
+        "year": 2020,
+        "ratePct": 7.859
+      },
+      "lowest": {
+        "year": 2023,
+        "ratePct": 4.172
+      },
+      "laborShockFactor": 1.88,
+      "recommendedEmergencyBufferMonths": 3.5,
+      "yearlyHistory": [
+        {
+          "year": 1991,
+          "rate": 7.641
+        },
+        {
+          "year": 1992,
+          "rate": 7.649
+        },
+        {
+          "year": 1993,
+          "rate": 7.662
+        },
+        {
+          "year": 1994,
+          "rate": 7.593
+        },
+        {
+          "year": 1995,
+          "rate": 7.57
+        },
+        {
+          "year": 1996,
+          "rate": 7.537
+        },
+        {
+          "year": 1997,
+          "rate": 7.574
+        },
+        {
+          "year": 1998,
+          "rate": 7.596
+        },
+        {
+          "year": 1999,
+          "rate": 7.583
+        },
+        {
+          "year": 2000,
+          "rate": 7.589
+        },
+        {
+          "year": 2001,
+          "rate": 7.611
+        },
+        {
+          "year": 2002,
+          "rate": 7.681
+        },
+        {
+          "year": 2003,
+          "rate": 7.633
+        },
+        {
+          "year": 2004,
+          "rate": 7.598
+        },
+        {
+          "year": 2005,
+          "rate": 7.551
+        },
+        {
+          "year": 2006,
+          "rate": 7.553
+        },
+        {
+          "year": 2007,
+          "rate": 7.562
+        },
+        {
+          "year": 2008,
+          "rate": 7.629
+        },
+        {
+          "year": 2009,
+          "rate": 7.636
+        },
+        {
+          "year": 2010,
+          "rate": 7.631
+        },
+        {
+          "year": 2011,
+          "rate": 7.609
+        },
+        {
+          "year": 2012,
+          "rate": 7.645
+        },
+        {
+          "year": 2013,
+          "rate": 7.678
+        },
+        {
+          "year": 2014,
+          "rate": 7.656
+        },
+        {
+          "year": 2015,
+          "rate": 7.629
+        },
+        {
+          "year": 2016,
+          "rate": 7.611
+        },
+        {
+          "year": 2017,
+          "rate": 7.626
+        },
+        {
+          "year": 2018,
+          "rate": 7.652
+        },
+        {
+          "year": 2019,
+          "rate": 6.51
+        },
+        {
+          "year": 2020,
+          "rate": 7.859
+        },
+        {
+          "year": 2021,
+          "rate": 6.38
+        },
+        {
+          "year": 2022,
+          "rate": 4.822
+        },
+        {
+          "year": 2023,
+          "rate": 4.172
+        },
+        {
+          "year": 2024,
+          "rate": 4.173
+        }
+      ]
+    },
+    "indianPersonalFinance": {
+      "totalSampleCount": 4000,
+      "nationalAvgIncomeINR": 98466,
+      "nationalMedianIncomeINR": 87500,
+      "nationalAvgSavingsRatePct": 32.6,
+      "nationalAvgResilienceScore": 60.1,
+      "byCityTier": {
+        "Tier 2": {
+          "sampleCount": 1388,
+          "avgIncomeINR": 93413,
+          "medianIncomeINR": 83500,
+          "avgEssentialExpensesINR": 48178,
+          "avgDiscretionaryExpensesINR": 11638,
+          "avgSavingsRatePct": 35.9,
+          "avgDiscretionaryRatioPct": 19.5,
+          "avgResilienceScore": 65.6,
+          "avgEmergencyFundMonths": 6.1
+        },
+        "Tier 1": {
+          "sampleCount": 1996,
+          "avgIncomeINR": 108034,
+          "medianIncomeINR": 96500,
+          "avgEssentialExpensesINR": 64912,
+          "avgDiscretionaryExpensesINR": 13484,
+          "avgSavingsRatePct": 27.4,
+          "avgDiscretionaryRatioPct": 17.2,
+          "avgResilienceScore": 51.9,
+          "avgEmergencyFundMonths": 4.0
+        },
+        "Tier 3": {
+          "sampleCount": 616,
+          "avgIncomeINR": 78845,
+          "medianIncomeINR": 71750,
+          "avgEssentialExpensesINR": 35742,
+          "avgDiscretionaryExpensesINR": 9950,
+          "avgSavingsRatePct": 42.0,
+          "avgDiscretionaryRatioPct": 21.6,
+          "avgResilienceScore": 74.4,
+          "avgEmergencyFundMonths": 8.2
+        }
+      }
+    },
+    "monthlySpendingSeasonality": {
+      "avgInflationCPIPct": 5.3,
+      "festivalSpikePct": 31.6,
+      "festivalPeakMonths": [
+        "October",
+        "November",
+        "March"
+      ],
+      "monthlySeasonality": {
+        "Jan": {
+          "avgExpenseINR": 75892,
+          "seasonalityIndex": 0.97
+        },
+        "Feb": {
+          "avgExpenseINR": 75868,
+          "seasonalityIndex": 0.97
+        },
+        "Mar": {
+          "avgExpenseINR": 100296,
+          "seasonalityIndex": 1.28
+        },
+        "Apr": {
+          "avgExpenseINR": 75720,
+          "seasonalityIndex": 0.97
+        },
+        "May": {
+          "avgExpenseINR": 78230,
+          "seasonalityIndex": 1.0
+        },
+        "Jun": {
+          "avgExpenseINR": 85310,
+          "seasonalityIndex": 1.09
+        },
+        "Jul": {
+          "avgExpenseINR": 85318,
+          "seasonalityIndex": 1.09
+        },
+        "Aug": {
+          "avgExpenseINR": 75727,
+          "seasonalityIndex": 0.97
+        },
+        "Sep": {
+          "avgExpenseINR": 75822,
+          "seasonalityIndex": 0.97
+        },
+        "Oct": {
+          "avgExpenseINR": 104006,
+          "seasonalityIndex": 1.33
+        },
+        "Nov": {
+          "avgExpenseINR": 104292,
+          "seasonalityIndex": 1.33
+        },
+        "Dec": {
+          "avgExpenseINR": 75772,
+          "seasonalityIndex": 0.97
+        }
+      }
+    },
+    "resumeSkillsExtraction": {
+      "totalResumes": 962,
+      "uniqueDomains": 25,
+      "categoryDistribution": {
+        "Java Developer": 84,
+        "Testing": 70,
+        "DevOps Engineer": 55,
+        "Python Developer": 48,
+        "Web Designing": 45,
+        "HR": 44,
+        "Hadoop": 42,
+        "Data Science": 40,
+        "Mechanical Engineer": 40,
+        "Sales": 40,
+        "Operations Manager": 40,
+        "ETL Developer": 40,
+        "Blockchain": 40,
+        "Arts": 36,
+        "Database": 33,
+        "Health and fitness": 30,
+        "Electrical Engineering": 30,
+        "PMO": 30,
+        "Business Analyst": 28,
+        "DotNet Developer": 28,
+        "Automation Testing": 26,
+        "Network Security Engineer": 25,
+        "Civil Engineer": 24,
+        "SAP Developer": 24,
+        "Advocate": 20
+      },
+      "domainKeySkills": {
+        "Data Science": [
+          "data",
+          "exprience",
+          "months",
+          "learning",
+          "python",
+          "science",
+          "year",
+          "than",
+          "machine",
+          "less",
+          "analytics",
+          "using"
+        ],
+        "HR": [
+          "exprience",
+          "description",
+          "skill",
+          "months",
+          "education",
+          "monthscompany",
+          "payroll",
+          "june",
+          "january",
+          "engineering",
+          "university",
+          "computer"
+        ],
+        "Advocate": [
+          "legal",
+          "university",
+          "advocate",
+          "exprience",
+          "january",
+          "court",
+          "maharashtra",
+          "description",
+          "than",
+          "skill",
+          "less",
+          "year"
+        ],
+        "Arts": [
+          "arts",
+          "description",
+          "january",
+          "maharashtra",
+          "college",
+          "skill",
+          "council",
+          "british",
+          "music",
+          "days",
+          "development",
+          "events"
+        ],
+        "Web Designing": [
+          "application",
+          "description",
+          "exprience",
+          "used",
+          "html",
+          "bootstrap",
+          "months",
+          "software",
+          "jquery",
+          "developed",
+          "technologies",
+          "roles"
+        ],
+        "Mechanical Engineer": [
+          "engineering",
+          "mechanical",
+          "design",
+          "description",
+          "technical",
+          "customer",
+          "products",
+          "vendor",
+          "cost",
+          "training",
+          "role",
+          "sales"
+        ],
+        "Sales": [
+          "sales",
+          "exprience",
+          "months",
+          "manager",
+          "description",
+          "marketing",
+          "office",
+          "year",
+          "college",
+          "targets",
+          "skill",
+          "cricket"
+        ],
+        "Health and fitness": [
+          "fitness",
+          "description",
+          "health",
+          "nutrition",
+          "sales",
+          "january",
+          "science",
+          "related",
+          "education",
+          "college",
+          "training",
+          "months"
+        ],
+        "Civil Engineer": [
+          "civil",
+          "engineer",
+          "site",
+          "description",
+          "construction",
+          "inspection",
+          "client",
+          "exprience",
+          "engineering",
+          "mumbai",
+          "drawings",
+          "maharashtra"
+        ],
+        "Java Developer": [
+          "java",
+          "exprience",
+          "months",
+          "developer",
+          "description",
+          "less",
+          "than",
+          "year",
+          "maharashtra",
+          "ajax",
+          "spring",
+          "technologies"
+        ],
+        "Business Analyst": [
+          "business",
+          "test",
+          "description",
+          "testing",
+          "requirement",
+          "requirements",
+          "exprience",
+          "from",
+          "process",
+          "functional",
+          "months",
+          "analysis"
+        ],
+        "SAP Developer": [
+          "hana",
+          "data",
+          "reports",
+          "developer",
+          "exprience",
+          "business",
+          "months",
+          "users",
+          "using",
+          "description",
+          "application",
+          "issues"
+        ],
+        "Automation Testing": [
+          "test",
+          "testing",
+          "automation",
+          "description",
+          "exprience",
+          "months",
+          "using",
+          "good",
+          "integration",
+          "involved",
+          "software",
+          "cases"
+        ],
+        "Electrical Engineering": [
+          "electrical",
+          "maintenance",
+          "engineering",
+          "power",
+          "maharashtra",
+          "description",
+          "operation",
+          "control",
+          "plant",
+          "technical",
+          "layout",
+          "design"
+        ],
+        "Operations Manager": [
+          "operations",
+          "client",
+          "services",
+          "ensuring",
+          "description",
+          "customer",
+          "quality",
+          "manager",
+          "development",
+          "from",
+          "business",
+          "timely"
+        ],
+        "Python Developer": [
+          "python",
+          "exprience",
+          "months",
+          "pune",
+          "completed",
+          "developer",
+          "training",
+          "year",
+          "internal",
+          "maharashtra",
+          "less",
+          "than"
+        ],
+        "DevOps Engineer": [
+          "exprience",
+          "months",
+          "shell",
+          "description",
+          "devops",
+          "servers",
+          "build",
+          "mysql",
+          "automation",
+          "applications",
+          "scripts",
+          "than"
+        ],
+        "Network Security Engineer": [
+          "network",
+          "exprience",
+          "security",
+          "cisco",
+          "months",
+          "configuration",
+          "year",
+          "than",
+          "less",
+          "firewall",
+          "description",
+          "server"
+        ],
+        "PMO": [
+          "report",
+          "responsible",
+          "business",
+          "reports",
+          "exprience",
+          "data",
+          "months",
+          "process",
+          "documentation",
+          "risk",
+          "description",
+          "resource"
+        ],
+        "Database": [
+          "database",
+          "server",
+          "oracle",
+          "exprience",
+          "databases",
+          "description",
+          "using",
+          "backup",
+          "months",
+          "installation",
+          "issues",
+          "servers"
+        ],
+        "Hadoop": [
+          "data",
+          "hadoop",
+          "hive",
+          "from",
+          "using",
+          "sqoop",
+          "description",
+          "hdfs",
+          "exprience",
+          "spark",
+          "months",
+          "cluster"
+        ],
+        "ETL Developer": [
+          "data",
+          "informatica",
+          "exprience",
+          "using",
+          "from",
+          "talend",
+          "developer",
+          "months",
+          "testing",
+          "description",
+          "unix",
+          "services"
+        ],
+        "DotNet Developer": [
+          "exprience",
+          "months",
+          "database",
+          "server",
+          "developer",
+          "description",
+          "application",
+          "jquery",
+          "less",
+          "than",
+          "year",
+          "this"
+        ],
+        "Blockchain": [
+          "blockchain",
+          "description",
+          "exprience",
+          "months",
+          "ethereum",
+          "january",
+          "technology",
+          "smart",
+          "computer",
+          "maharashtra",
+          "mysql",
+          "java"
+        ],
+        "Testing": [
+          "testing",
+          "test",
+          "exprience",
+          "months",
+          "maharashtra",
+          "windows",
+          "check",
+          "transformer",
+          "january",
+          "engineer",
+          "description",
+          "quality"
+        ]
+      }
+    },
+    "jobSkillsRequirements": {
+      "totalJobPostings": 1250,
+      "topCategories": {
+        "Sales & Account Management": 168,
+        "Marketing & Communications": 165,
+        "Finance": 115,
+        "Technical Solutions": 101,
+        "Business Strategy": 98,
+        "People Operations": 86,
+        "User Experience & Design": 84,
+        "Program Management": 74,
+        "Partnerships": 60,
+        "Product & Customer Support": 50
+      },
+      "topDemandedSkills": [
+        {
+          "skill": "communication",
+          "mentions": 589,
+          "frequencyPct": 47.1
+        },
+        {
+          "skill": "cloud",
+          "mentions": 240,
+          "frequencyPct": 19.2
+        },
+        {
+          "skill": "rest",
+          "mentions": 200,
+          "frequencyPct": 16.0
+        },
+        {
+          "skill": "python",
+          "mentions": 171,
+          "frequencyPct": 13.7
+        },
+        {
+          "skill": "java",
+          "mentions": 165,
+          "frequencyPct": 13.2
+        },
+        {
+          "skill": "leadership",
+          "mentions": 141,
+          "frequencyPct": 11.3
+        },
+        {
+          "skill": "sql",
+          "mentions": 139,
+          "frequencyPct": 11.1
+        },
+        {
+          "skill": "git",
+          "mentions": 118,
+          "frequencyPct": 9.4
+        },
+        {
+          "skill": "c++",
+          "mentions": 83,
+          "frequencyPct": 6.6
+        },
+        {
+          "skill": "linux",
+          "mentions": 61,
+          "frequencyPct": 4.9
+        },
+        {
+          "skill": "data analysis",
+          "mentions": 42,
+          "frequencyPct": 3.4
+        },
+        {
+          "skill": "machine learning",
+          "mentions": 35,
+          "frequencyPct": 2.8
+        },
+        {
+          "skill": "agile",
+          "mentions": 29,
+          "frequencyPct": 2.3
+        },
+        {
+          "skill": "aws",
+          "mentions": 14,
+          "frequencyPct": 1.1
+        },
+        {
+          "skill": "azure",
+          "mentions": 8,
+          "frequencyPct": 0.6
+        }
+      ]
+    },
+    "aiJobRolePrediction": {
+      "totalProfilesAnalyzed": 3000,
+      "avgSkillMatchPct": 51.6,
+      "avgSalaryGrowthPotentialPct": 37.1,
+      "topTargetRoles": {
+        "Senior Data Scientist": 250,
+        "Business Intelligence Engineer": 250,
+        "Lead Java Microservices Architect": 250,
+        "Full Stack Python Engineer": 250,
+        "Cloud Platform Architect": 250,
+        "Lead UI/UX Frontend Architect": 250,
+        "Cyber Defense & Cloud Security Specialist": 250,
+        "Senior Product & Analytics Manager": 250
+      },
+      "sampleCareerTransitions": [
+        {
+          "currentRole": "Data Science",
+          "targetRole": "Senior Data Scientist",
+          "avgMatchPct": 50.0,
+          "upskilling": "Learn Machine Learning and Deep Learning",
+          "expectedSalaryGrowthPct": 5.9
+        },
+        {
+          "currentRole": "Data Science",
+          "targetRole": "Senior Data Scientist",
+          "avgMatchPct": 70.0,
+          "upskilling": "Learn MLOps and AWS",
+          "expectedSalaryGrowthPct": 63.6
+        },
+        {
+          "currentRole": "Data Science",
+          "targetRole": "Senior Data Scientist",
+          "avgMatchPct": 60.0,
+          "upskilling": "Learn Machine Learning and Deep Learning",
+          "expectedSalaryGrowthPct": 50.0
+        },
+        {
+          "currentRole": "Data Science",
+          "targetRole": "Senior Data Scientist",
+          "avgMatchPct": 70.0,
+          "upskilling": "Learn Machine Learning and MLOps",
+          "expectedSalaryGrowthPct": 94.1
+        },
+        {
+          "currentRole": "Data Science",
+          "targetRole": "Senior Data Scientist",
+          "avgMatchPct": 50.0,
+          "upskilling": "Learn Machine Learning and PyTorch",
+          "expectedSalaryGrowthPct": 17.4
+        },
+        {
+          "currentRole": "Data Science",
+          "targetRole": "Senior Data Scientist",
+          "avgMatchPct": 60.0,
+          "upskilling": "Learn Machine Learning and Deep Learning",
+          "expectedSalaryGrowthPct": 65.5
+        },
+        {
+          "currentRole": "Data Science",
+          "targetRole": "Senior Data Scientist",
+          "avgMatchPct": 70.0,
+          "upskilling": "Learn Deep Learning and MLOps",
+          "expectedSalaryGrowthPct": 127.8
+        },
+        {
+          "currentRole": "Data Science",
+          "targetRole": "Senior Data Scientist",
+          "avgMatchPct": 50.0,
+          "upskilling": "Learn Machine Learning and Deep Learning",
+          "expectedSalaryGrowthPct": 16.1
+        },
+        {
+          "currentRole": "Data Science",
+          "targetRole": "Senior Data Scientist",
+          "avgMatchPct": 40.0,
+          "upskilling": "Learn Machine Learning and Deep Learning",
+          "expectedSalaryGrowthPct": 7.1
+        },
+        {
+          "currentRole": "Data Science",
+          "targetRole": "Senior Data Scientist",
+          "avgMatchPct": 50.0,
+          "upskilling": "Learn Machine Learning and Deep Learning",
+          "expectedSalaryGrowthPct": 35.7
+        },
+        {
+          "currentRole": "Data Science",
+          "targetRole": "Senior Data Scientist",
+          "avgMatchPct": 70.0,
+          "upskilling": "Learn Machine Learning and Deep Learning",
+          "expectedSalaryGrowthPct": 65.0
+        },
+        {
+          "currentRole": "Data Science",
+          "targetRole": "Senior Data Scientist",
+          "avgMatchPct": 40.0,
+          "upskilling": "Learn Machine Learning and Deep Learning",
+          "expectedSalaryGrowthPct": -12.0
+        },
+        {
+          "currentRole": "Data Science",
+          "targetRole": "Senior Data Scientist",
+          "avgMatchPct": 60.0,
+          "upskilling": "Learn Deep Learning and MLOps",
+          "expectedSalaryGrowthPct": 37.1
+        },
+        {
+          "currentRole": "Data Science",
+          "targetRole": "Senior Data Scientist",
+          "avgMatchPct": 40.0,
+          "upskilling": "Learn Machine Learning and Deep Learning",
+          "expectedSalaryGrowthPct": 5.6
+        },
+        {
+          "currentRole": "Data Science",
+          "targetRole": "Senior Data Scientist",
+          "avgMatchPct": 50.0,
+          "upskilling": "Learn Machine Learning and Deep Learning",
+          "expectedSalaryGrowthPct": 46.9
+        }
+      ]
+    }
+  }
+}

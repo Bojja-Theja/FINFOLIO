@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { WalletService } from '../services/walletService';
-import { DatabaseService } from '../services/databaseService';
+import { WalletService } from '../services/walletService.js';
+import { DatabaseService } from '../services/databaseService.js';
 
 describe('FinFolio Phase 3: Simulated Wallet & Auditable Ledger', () => {
   const userId = 105;

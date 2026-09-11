@@ -1,5 +1,5 @@
-import { query } from '../config/db';
-import { calculateEMI } from '../utils/calculator';
+import { query } from '../config/db.js';
+import { calculateEMI } from '../utils/calculator.js';
 
 export type LoanType = 'personal_loan' | 'home_loan' | 'car_loan' | 'education_loan' | 'business_loan';
 
@@ -7,7 +7,7 @@ export interface LoanRecommendationInput {
   userId?: number;
   annualIncome: number;
   monthlyExpenses: number;
-  existingEmi?: number;
+  existingEmi?: number | undefined;
   desiredLoanAmount: number;
   tenureMonths: number;
   creditScore: number;

@@ -1,4 +1,4 @@
-import { DatabaseService } from './databaseService';
+import { DatabaseService } from './databaseService.js';
 
 interface IncomeData {
   monthlyIncome: number;

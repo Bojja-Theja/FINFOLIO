@@ -1,6 +1,6 @@
 import * as cron from 'node-cron';
-import { CronService } from '../services/cronService';
-import { logger } from '../utils/logger';
+import { CronService } from '../services/cronService.js';
+import { logger } from '../utils/logger.js';
 
 /**
  * Scheduled Jobs Manager

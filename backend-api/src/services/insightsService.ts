@@ -1,8 +1,8 @@
-import { calculateHealthScore } from './healthScoreService';
-import { calculateSurvivalMonths } from './survivalService';
-import { calculateIncomeSuitabilityScore } from './incomeVarianceService';
-import { getSavingsStatus, getDisciplineInsights } from './savingsService';
-import { logger } from '../utils/logger';
+import { calculateHealthScore } from './healthScoreService.js';
+import { calculateSurvivalMonths } from './survivalService.js';
+import { calculateIncomeSuitabilityScore } from './incomeVarianceService.js';
+import { getSavingsStatus, getDisciplineInsights } from './savingsService.js';
+import { logger } from '../utils/logger.js';
 
 interface Alert {
   id: string;

@@ -8,8 +8,8 @@ import {
   checkTransaction,
   processTransaction,
   triggerAutoSave
-} from '../controllers/savingsController';
-import { optionalAuthMiddleware, requireAuthMiddleware } from '../middleware/optionalAuthMiddleware';
+} from '../controllers/savingsController.js';
+import { optionalAuthMiddleware, requireAuthMiddleware } from '../middleware/optionalAuthMiddleware.js';
 
 const router = Router();
 

@@ -1,6 +1,6 @@
-import { logger } from '../utils/logger';
-import { DatabaseService } from './databaseService';
-import { query } from '../config/db';
+import { logger } from '../utils/logger.js';
+import { DatabaseService } from './databaseService.js';
+import { query } from '../config/db.js';
 
 interface SavingsPlan {
   id: number;

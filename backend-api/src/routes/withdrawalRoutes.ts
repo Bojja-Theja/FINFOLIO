@@ -9,8 +9,8 @@ import {
   executeEmergency,
   getEmergencyPatterns,
   executeOverride,
-} from '../controllers/withdrawalController';
-import { optionalAuthMiddleware, requireAuthMiddleware } from '../middleware/optionalAuthMiddleware';
+} from '../controllers/withdrawalController.js';
+import { optionalAuthMiddleware, requireAuthMiddleware } from '../middleware/optionalAuthMiddleware.js';
 
 const router = Router();
 

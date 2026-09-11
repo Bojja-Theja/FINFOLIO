@@ -1,7 +1,7 @@
-import { AssetAllocationService } from './assetAllocationService';
-import { EmergencyFundService } from './emergencyFundService';
-import { generateComprehensiveInsights } from './insightsService';
-import { logger } from '../utils/logger';
+import { AssetAllocationService } from './assetAllocationService.js';
+import { EmergencyFundService } from './emergencyFundService.js';
+import { generateComprehensiveInsights } from './insightsService.js';
+import { logger } from '../utils/logger.js';
 
 export class CronService {
   /**

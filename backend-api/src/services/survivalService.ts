@@ -1,4 +1,5 @@
-import { DatabaseService } from './databaseService';
+import { DatabaseService } from './databaseService.js';
+import { datasetService } from './datasetService.js';
 
 interface SurvivalInputs {
   emergencyFund: number;
@@ -106,9 +107,14 @@ export const calculateSurvivalFromInputs = (inputs: SurvivalInputs): SurvivalRes
   // Determine risk level
   const riskLevel = getRiskLevel(conservativeMonths);
 
+  // Incorporate macroeconomic labor market risk from World Bank data
+  const macroRisk = datasetService.getMacroUnemploymentRisk();
+  const shockFactor = macroRisk?.laborShockFactor || 1.88;
+  const jobLossMultiplier = Math.max(0.65, Math.min(0.85, +(0.85 / (1 + (shockFactor - 1) * 0.15)).toFixed(2)));
+
   // Calculate scenario-specific survival periods
   const scenarios = {
-    jobLoss: Math.floor(conservativeMonths * 0.8), // Job loss reduces available time
+    jobLoss: Math.floor(conservativeMonths * jobLossMultiplier), // Dynamic buffer adjusted for labor market friction
     medicalEmergency: Math.floor(conservativeMonths * 0.6), // Medical emergencies drain funds faster
     marketCrash: Math.floor(conservativeMonths * 0.9) // Market crash affects investments
   };

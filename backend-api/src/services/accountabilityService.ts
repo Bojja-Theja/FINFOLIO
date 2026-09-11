@@ -1,12 +1,12 @@
-import { DatabaseService } from './databaseService';
+import { DatabaseService } from './databaseService.js';
 import {
   AccountabilityPartner,
   CommitmentLevel,
   CommitmentRule,
   WithdrawalRequest,
   WithdrawalStatus,
-} from '../models/Accountability';
-import { logger } from '../utils/logger';
+} from '../models/Accountability.js';
+import { logger } from '../utils/logger.js';
 
 export interface PartnerViewRequest {
   id: number;
@@ -432,8 +432,8 @@ export class AccountabilityService {
       runwayImpactMonths: r.runwayImpactMonths,
       isEmergency: r.isEmergency,
       isOverride: r.isOverride,
-      partnerNotes: r.partnerNotes,
-      decisionDate: r.decisionDate,
+      partnerNotes: r.partnerNotes ?? undefined,
+      decisionDate: r.decisionDate ?? undefined,
       createdAt: r.createdAt,
     }));
   }
@@ -501,8 +501,8 @@ export class AccountabilityService {
       runwayImpactMonths: updated.runwayImpactMonths,
       isEmergency: updated.isEmergency,
       isOverride: updated.isOverride,
-      partnerNotes: updated.partnerNotes,
-      decisionDate: updated.decisionDate,
+      partnerNotes: updated.partnerNotes ?? undefined,
+      decisionDate: updated.decisionDate ?? undefined,
       createdAt: updated.createdAt,
     };
   }

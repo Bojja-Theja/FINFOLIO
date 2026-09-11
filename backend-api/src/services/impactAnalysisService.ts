@@ -1,8 +1,8 @@
-import { DatabaseService } from './databaseService';
-import { WalletService } from './walletService';
-import { FinancialGoalService } from './financialGoalService';
-import { AccountabilityService } from './accountabilityService';
-import { logger } from '../utils/logger';
+import { DatabaseService } from './databaseService.js';
+import { WalletService } from './walletService.js';
+import { FinancialGoalService } from './financialGoalService.js';
+import { AccountabilityService } from './accountabilityService.js';
+import { logger } from '../utils/logger.js';
 
 export interface RunwayScenario {
   name: string;

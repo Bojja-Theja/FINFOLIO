@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { calculateHealthScore } from '../services/healthScoreService';
-import { calculateSurvivalMonths } from '../services/survivalService';
-import { calculateIncomeSuitabilityScore } from '../services/incomeVarianceService';
-import { monteCarloProjection } from '../services/whatIfService';
-import { getDebtSnowballRecommendation } from '../services/aiCoachService';
-import { buildLoanRecommendation, type LoanType } from '../services/loanRecommendationService';
-import { AIResilienceService } from '../services/aiResilienceService';
-import { logger } from '../utils/logger';
+import { calculateHealthScore } from '../services/healthScoreService.js';
+import { calculateSurvivalMonths } from '../services/survivalService.js';
+import { calculateIncomeSuitabilityScore } from '../services/incomeVarianceService.js';
+import { monteCarloProjection } from '../services/whatIfService.js';
+import { getDebtSnowballRecommendation } from '../services/aiCoachService.js';
+import { buildLoanRecommendation, type LoanType } from '../services/loanRecommendationService.js';
+import { AIResilienceService } from '../services/aiResilienceService.js';
+import { logger } from '../utils/logger.js';
 
 export const calculateFinance = async (req: Request, res: Response) => {
   // TODO: General finance calculations
@@ -75,7 +75,7 @@ export const getIncomeScore = async (req: Request, res: Response) => {
   });
 };
 
-export const getWhatIfProjection = async (req: Request, res: Response) => {
+export const getWhatIfProjection = async (req: Request, res: Response): Promise<void> => {
   const userId = 1; // Use demo user ID 1 for all requests
   const { jobLoss, raise, expenseChange } = req.body;
 
@@ -100,7 +100,8 @@ export const getWhatIfProjection = async (req: Request, res: Response) => {
         { year: 10, netWorth: 685000, upperBound: 1000000, lowerBound: 370000 }
       ]
     };
-    return res.json(demoResult);
+    res.json(demoResult);
+    return;
   }
 
   res.json(result);
@@ -172,7 +173,7 @@ export const getDebtRecommendation = async (req: Request, res: Response) => {
   res.json(recommendation);
 };
 
-export const getLoanRecommendation = async (req: Request, res: Response) => {
+export const getLoanRecommendation = async (req: Request, res: Response): Promise<void> => {
   const userId = (req as any).userId;
 
   const {
@@ -187,18 +188,20 @@ export const getLoanRecommendation = async (req: Request, res: Response) => {
   } = req.body || {};
 
   if (!annualIncome || !monthlyExpenses || !desiredLoanAmount || !tenureMonths || !creditScore || !employmentYears || !loanType) {
-    return res.status(400).json({
+    res.status(400).json({
       error: 'Missing required fields',
       required: ['annualIncome', 'monthlyExpenses', 'desiredLoanAmount', 'tenureMonths', 'creditScore', 'employmentYears', 'loanType'],
     });
+    return;
   }
 
   const allowedTypes: LoanType[] = ['personal_loan', 'home_loan', 'car_loan', 'education_loan', 'business_loan'];
   if (!allowedTypes.includes(loanType)) {
-    return res.status(400).json({
+    res.status(400).json({
       error: 'Invalid loanType',
       allowed: allowedTypes,
     });
+    return;
   }
 
   const recommendation = await buildLoanRecommendation({

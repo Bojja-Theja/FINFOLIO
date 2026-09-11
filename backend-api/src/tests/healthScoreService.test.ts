@@ -1,4 +1,4 @@
-import { calculateScoreFromData } from '../services/healthScoreService';
+import { calculateScoreFromData } from '../services/healthScoreService.js';
 
 describe('healthScoreService', () => {
     test('should calculate a high score for stable financial data', () => {

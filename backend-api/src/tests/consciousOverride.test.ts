@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { WithdrawalService } from '../services/withdrawalService';
-import { WalletService } from '../services/walletService';
-import { AccountabilityService } from '../services/accountabilityService';
-import { DatabaseService } from '../services/databaseService';
-import { EmergencyService } from '../services/emergencyService';
+import { WithdrawalService } from '../services/withdrawalService.js';
+import { WalletService } from '../services/walletService.js';
+import { AccountabilityService } from '../services/accountabilityService.js';
+import { DatabaseService } from '../services/databaseService.js';
+import { EmergencyService } from '../services/emergencyService.js';
 
 describe('FinFolio Phase 7: Conscious User Override', () => {
   const userId = 301;

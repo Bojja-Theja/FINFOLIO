@@ -7,8 +7,8 @@ import {
   deleteGoal,
   contributeGoal,
   getFoundationSummary,
-} from '../controllers/financialGoalController';
-import { optionalAuthMiddleware, requireAuthMiddleware } from '../middleware/optionalAuthMiddleware';
+} from '../controllers/financialGoalController.js';
+import { optionalAuthMiddleware, requireAuthMiddleware } from '../middleware/optionalAuthMiddleware.js';
 
 const router = Router();
 

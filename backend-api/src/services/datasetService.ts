@@ -1,10 +1,10 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import * as fs from 'fs';
+import * as path from 'path';
 import { parse } from 'csv-parse/sync';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const getBaseDir = () => {
+    return process.cwd();
+};
 
 export interface SalaryData {
     yearsExperience: number;
@@ -46,14 +46,30 @@ export interface BenefitData {
 
 class DatasetService {
     private datasetPath: string;
+    private dataPath: string;
     private salaryData: SalaryData[] | null = null;
     private turnoverData: TurnoverData[] | null = null;
     private stockData: StockData[] | null = null;
     private benefitsData: BenefitData[] | null = null;
+    private analyticsSummary: any = null;
 
     constructor() {
-        // Path to dataset folder (adjust based on your project structure)
-        this.datasetPath = path.join(__dirname, '../../../dataset');
+        this.datasetPath = this.findPath(['../../../dataset', '../../dataset', 'dataset']);
+        this.dataPath = this.findPath(['../../../data', '../../data', 'data', '../data']);
+    }
+
+    private findPath(relativeCandidates: string[]): string {
+        for (const candidate of relativeCandidates) {
+            const resolvedFromCwd = path.resolve(getBaseDir(), candidate);
+            if (fs.existsSync(resolvedFromCwd)) {
+                return resolvedFromCwd;
+            }
+            const resolvedFromParent = path.resolve(getBaseDir(), '..', candidate);
+            if (fs.existsSync(resolvedFromParent)) {
+                return resolvedFromParent;
+            }
+        }
+        return path.resolve(getBaseDir(), relativeCandidates[0]);
     }
 
     /**
@@ -163,9 +179,9 @@ class DatasetService {
         age: number;
         industry: string;
         profession: string;
-        extraversion?: number;
-        selfcontrol?: number;
-        anxiety?: number;
+        extraversion?: number | undefined;
+        selfcontrol?: number | undefined;
+        anxiety?: number | undefined;
     }): {
         riskScore: number;
         riskLevel: 'low' | 'medium' | 'high';
@@ -466,6 +482,227 @@ class DatasetService {
     async searchH1B(query: string) {
         const summary = await this.getH1BSummary();
         return summary.filter(s => s.jobTitle.toLowerCase().includes(query.toLowerCase()));
+    }
+
+    /**
+     * Get precomputed analytics summary for all 6 datasets
+     */
+    getAnalyticsSummary(): any {
+        if (!this.analyticsSummary) {
+            try {
+                const summaryPath = path.join(this.dataPath, 'analytics_summary.json');
+                if (fs.existsSync(summaryPath)) {
+                    const content = fs.readFileSync(summaryPath, 'utf-8');
+                    this.analyticsSummary = JSON.parse(content);
+                }
+            } catch (error) {
+                console.error('Error loading analytics summary:', error);
+            }
+        }
+        return this.analyticsSummary;
+    }
+
+    /**
+     * Get macroeconomic unemployment risk metrics (World Bank Indicator SL.UEM.TOTL.ZS)
+     */
+    getMacroUnemploymentRisk() {
+        const summary = this.getAnalyticsSummary();
+        if (summary?.datasets?.worldBankUnemployment) {
+            return summary.datasets.worldBankUnemployment;
+        }
+
+        // Fallback default based on validated data
+        return {
+            indicator: 'SL.UEM.TOTL.ZS (India Unemployment % of Total Labor Force)',
+            latest: { year: 2024, ratePct: 4.17 },
+            historicalAveragePct: 7.27,
+            recent10YrAveragePct: 6.44,
+            peak: { year: 2020, ratePct: 7.86 },
+            lowest: { year: 2023, ratePct: 4.17 },
+            laborShockFactor: 1.88,
+            recommendedEmergencyBufferMonths: 3.5,
+        };
+    }
+
+    /**
+     * Get Indian Personal Finance & Spending Benchmarks by City Tier
+     */
+    getIndianFinanceBenchmarks(cityTier?: string) {
+        const summary = this.getAnalyticsSummary();
+        const personalFinance = summary?.datasets?.indianPersonalFinance;
+
+        if (!personalFinance) {
+            return {
+                nationalAvgIncomeINR: 98000,
+                nationalAvgSavingsRatePct: 32.5,
+                nationalAvgResilienceScore: 60.0,
+                byCityTier: {
+                    'Tier 1': { avgIncomeINR: 108000, avgEssentialExpensesINR: 65000, avgSavingsRatePct: 27.4, avgEmergencyFundMonths: 4.0 },
+                    'Tier 2': { avgIncomeINR: 93000, avgEssentialExpensesINR: 48000, avgSavingsRatePct: 35.9, avgEmergencyFundMonths: 6.1 },
+                    'Tier 3': { avgIncomeINR: 78000, avgEssentialExpensesINR: 35000, avgSavingsRatePct: 42.0, avgEmergencyFundMonths: 8.2 },
+                },
+            };
+        }
+
+        if (cityTier && personalFinance.byCityTier[cityTier]) {
+            return {
+                tier: cityTier,
+                metrics: personalFinance.byCityTier[cityTier],
+                nationalBenchmark: {
+                    nationalAvgIncomeINR: personalFinance.nationalAvgIncomeINR,
+                    nationalAvgSavingsRatePct: personalFinance.nationalAvgSavingsRatePct,
+                    nationalAvgResilienceScore: personalFinance.nationalAvgResilienceScore,
+                },
+            };
+        }
+
+        return personalFinance;
+    }
+
+    /**
+     * Compare a user's financial profile against Indian demographic benchmarks
+     */
+    compareAgainstBenchmark(profile: {
+        income: number;
+        savingsRate: number;
+        discretionaryRatio?: number | undefined;
+        cityTier?: string | undefined;
+    }) {
+        const benchmarks = this.getIndianFinanceBenchmarks();
+        const tier = profile.cityTier || 'Tier 1';
+        const tierBench = benchmarks.byCityTier?.[tier] || benchmarks.byCityTier?.['Tier 1'];
+
+        const incomePercentOfBenchmark = Math.round((profile.income / (tierBench.avgIncomeINR || 1)) * 100);
+        const savingsRateDifference = +(profile.savingsRate - (tierBench.avgSavingsRatePct || 30)).toFixed(1);
+
+        const recommendations: string[] = [];
+        if (savingsRateDifference < -5) {
+            recommendations.push(`Your savings rate (${profile.savingsRate}%) is below the ${tier} average (${tierBench.avgSavingsRatePct}%). Aim to trim discretionary outlays.`);
+        } else if (savingsRateDifference > 5) {
+            recommendations.push(`Outstanding savings discipline! You are outperforming the ${tier} average by ${savingsRateDifference}%.`);
+        }
+
+        if (profile.discretionaryRatio && profile.discretionaryRatio > (tierBench.avgDiscretionaryRatioPct || 20)) {
+            recommendations.push(`Discretionary spending is high (${profile.discretionaryRatio}% vs ${tierBench.avgDiscretionaryRatioPct}% average). Consider the 50-30-20 rule.`);
+        }
+
+        return {
+            cityTier: tier,
+            benchmark: tierBench,
+            comparison: {
+                incomePercentOfBenchmark,
+                savingsRateDifference,
+                isAboveAverageSavings: savingsRateDifference >= 0,
+            },
+            recommendations,
+        };
+    }
+
+    /**
+     * Get monthly spending seasonality, festival spikes, and inflation trends
+     */
+    getMonthlySpendingTrends() {
+        const summary = this.getAnalyticsSummary();
+        const spending = summary?.datasets?.monthlySpendingSeasonality;
+
+        if (!spending) {
+            return {
+                avgInflationCPIPct: 5.3,
+                festivalSpikePct: 31.6,
+                festivalPeakMonths: ['October', 'November', 'March'],
+                monthlySeasonality: {},
+            };
+        }
+
+        return spending;
+    }
+
+    /**
+     * Analyze career skill gap against industry requirements
+     */
+    getCareerSkillGap(targetRole: string, userSkills: string[] = []) {
+        const summary = this.getAnalyticsSummary();
+        const transitions = summary?.datasets?.aiJobRolePrediction?.sampleCareerTransitions || [];
+        const demandedSkills = summary?.datasets?.jobSkillsRequirements?.topDemandedSkills || [];
+
+        const normalizedTarget = targetRole.toLowerCase().trim();
+        const normalizedUserSkills = new Set(userSkills.map(s => s.toLowerCase().trim()));
+
+        // Find relevant transition or target role matches
+        const matchedTransition = transitions.find((t: any) =>
+            t.targetRole.toLowerCase().includes(normalizedTarget) ||
+            normalizedTarget.includes(t.targetRole.toLowerCase())
+        );
+
+        // Core required skills for target roles
+        const domainSkillsMap: Record<string, string[]> = {
+            'data science': ['Python', 'SQL', 'Machine Learning', 'Pandas', 'Scikit-Learn', 'PyTorch', 'MLOps', 'AWS'],
+            'senior data scientist': ['Python', 'Machine Learning', 'Deep Learning', 'PyTorch', 'MLOps', 'AWS', 'System Design'],
+            'java developer': ['Java', 'Spring Boot', 'REST APIs', 'Kafka', 'Kubernetes', 'Docker', 'Microservices', 'PostgreSQL'],
+            'full stack python': ['Python', 'FastAPI', 'React', 'PostgreSQL', 'Redis', 'Docker', 'Celery', 'Git'],
+            'devops': ['Linux', 'Kubernetes', 'Terraform', 'AWS', 'CI/CD', 'Docker', 'Prometheus', 'Git'],
+            'cloud platform architect': ['Kubernetes', 'Terraform', 'AWS', 'GCP', 'System Design', 'CI/CD', 'Security'],
+            'web designing': ['React', 'TypeScript', 'Next.js', 'TailwindCSS', 'JavaScript', 'HTML5', 'CSS3', 'Figma'],
+            'frontend': ['React', 'TypeScript', 'Next.js', 'TailwindCSS', 'JavaScript', 'State Management'],
+            'business analyst': ['Product Strategy', 'SQL', 'Data Analytics', 'Agile', 'Jira', 'Stakeholder Management'],
+        };
+
+        let targetSkills: string[] = [];
+        for (const [domainKey, skills] of Object.entries(domainSkillsMap)) {
+            if (normalizedTarget.includes(domainKey)) {
+                targetSkills = skills;
+                break;
+            }
+        }
+
+        if (targetSkills.length === 0) {
+            targetSkills = ['Python', 'SQL', 'Cloud', 'Git', 'Agile', 'Communication', 'Problem Solving'];
+        }
+
+        const matchingSkills = targetSkills.filter(s => normalizedUserSkills.has(s.toLowerCase()));
+        const missingSkills = targetSkills.filter(s => !normalizedUserSkills.has(s.toLowerCase()));
+        const matchPct = targetSkills.length > 0
+            ? Math.round((matchingSkills.length / targetSkills.length) * 100)
+            : 50;
+
+        return {
+            targetRole,
+            userSkillsCount: userSkills.length,
+            matchPercentage: matchPct,
+            matchingSkills,
+            missingSkills,
+            highDemandIndustrySkills: demandedSkills.slice(0, 8),
+            expectedGrowthPct: matchedTransition?.expectedSalaryGrowthPct || 35,
+            upskillingRecommendation: missingSkills.length > 0
+                ? `Prioritize mastering ${missingSkills.slice(0, 3).join(', ')} to boost interview readiness.`
+                : 'Your skill set strongly matches the target position criteria.',
+        };
+    }
+
+    /**
+     * Get domain keywords from resume dataset
+     */
+    getResumeDomainKeywords(category?: string) {
+        const summary = this.getAnalyticsSummary();
+        const resumeData = summary?.datasets?.resumeSkillsExtraction;
+
+        if (!resumeData) {
+            return { totalResumes: 962, categories: [], keywords: [] };
+        }
+
+        if (category && resumeData.domainKeySkills?.[category]) {
+            return {
+                category,
+                topKeywords: resumeData.domainKeySkills[category],
+            };
+        }
+
+        return {
+            totalResumes: resumeData.totalResumes,
+            uniqueDomains: resumeData.uniqueDomains,
+            categoryDistribution: resumeData.categoryDistribution,
+            domainKeySkills: resumeData.domainKeySkills,
+        };
     }
 }
 

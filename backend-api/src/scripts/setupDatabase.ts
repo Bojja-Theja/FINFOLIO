@@ -1,4 +1,4 @@
-import { query } from '../config/db';
+import { query } from '../config/db.js';
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';

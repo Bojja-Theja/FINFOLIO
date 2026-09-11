@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll, beforeEach } from 'vitest';
-import { EmergencyService } from '../services/emergencyService';
-import { WithdrawalService } from '../services/withdrawalService';
-import { WalletService } from '../services/walletService';
-import { AccountabilityService } from '../services/accountabilityService';
-import { DatabaseService } from '../services/databaseService';
+import { EmergencyService } from '../services/emergencyService.js';
+import { WithdrawalService } from '../services/withdrawalService.js';
+import { WalletService } from '../services/walletService.js';
+import { AccountabilityService } from '../services/accountabilityService.js';
+import { DatabaseService } from '../services/databaseService.js';
 
 describe('FinFolio Phase 6: Emergency Mode & Pattern Anomaly Detection', () => {
   const userId = 201;

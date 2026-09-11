@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { WalletService } from '../services/walletService';
-import { logger } from '../utils/logger';
+import { WalletService } from '../services/walletService.js';
+import { logger } from '../utils/logger.js';
 
 export const getWallet = async (req: Request, res: Response) => {
   try {

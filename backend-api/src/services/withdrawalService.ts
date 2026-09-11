@@ -1,11 +1,11 @@
-import { DatabaseService } from './databaseService';
-import { WalletService } from './walletService';
-import { FinancialGoalService } from './financialGoalService';
-import { ImpactAnalysisService, PreTransactionImpact } from './impactAnalysisService';
-import { EmergencyAnomalyResult, WithdrawalRequest, WithdrawalStatus } from '../models/Accountability';
-import { WalletTransaction } from '../models/Wallet';
-import { EmergencyService } from './emergencyService';
-import { logger } from '../utils/logger';
+import { DatabaseService } from './databaseService.js';
+import { WalletService } from './walletService.js';
+import { FinancialGoalService } from './financialGoalService.js';
+import { ImpactAnalysisService, PreTransactionImpact } from './impactAnalysisService.js';
+import { EmergencyAnomalyResult, WithdrawalRequest, WithdrawalStatus } from '../models/Accountability.js';
+import { WalletTransaction } from '../models/Wallet.js';
+import { EmergencyService } from './emergencyService.js';
+import { logger } from '../utils/logger.js';
 
 export interface WithdrawalExecutionResult {
   request: WithdrawalRequest;
@@ -384,7 +384,7 @@ export class WithdrawalService {
     const updated = await DatabaseService.updateWithdrawalRequestStatus(
       requestId,
       'executed',
-      request.partnerNotes,
+      request.partnerNotes ?? undefined,
       new Date()
     );
 

@@ -1,28 +1,30 @@
 import { Request, Response } from 'express';
-import { datasetService } from '../services/datasetService';
-import { logger } from '../utils/logger';
+import { datasetService } from '../services/datasetService.js';
+import { logger } from '../utils/logger.js';
 
 /**
  * Get salary prediction
  */
-export const getSalaryPrediction = async (req: Request, res: Response) => {
+export const getSalaryPrediction = async (req: Request, res: Response): Promise<void> => {
     try {
         const { experience } = req.query;
 
         if (!experience) {
-            return res.status(400).json({
+            res.status(400).json({
                 success: false,
                 message: 'Years of experience is required',
             });
+            return;
         }
 
         const yearsExperience = parseFloat(experience as string);
 
         if (isNaN(yearsExperience) || yearsExperience < 0) {
-            return res.status(400).json({
+            res.status(400).json({
                 success: false,
                 message: 'Invalid years of experience',
             });
+            return;
         }
 
         const predictedSalary = datasetService.predictSalary(yearsExperience);
@@ -50,15 +52,16 @@ export const getSalaryPrediction = async (req: Request, res: Response) => {
 /**
  * Get career stability prediction
  */
-export const getCareerStability = async (req: Request, res: Response) => {
+export const getCareerStability = async (req: Request, res: Response): Promise<void> => {
     try {
         const { age, industry, profession, extraversion, selfcontrol, anxiety } = req.query;
 
         if (!age || !industry || !profession) {
-            return res.status(400).json({
+            res.status(400).json({
                 success: false,
                 message: 'Age, industry, and profession are required',
             });
+            return;
         }
 
         const profile = {
@@ -88,15 +91,16 @@ export const getCareerStability = async (req: Request, res: Response) => {
 /**
  * Get portfolio recommendations
  */
-export const getPortfolioRecommendations = async (req: Request, res: Response) => {
+export const getPortfolioRecommendations = async (req: Request, res: Response): Promise<void> => {
     try {
         const { riskProfile } = req.query;
 
         if (!riskProfile || !['conservative', 'moderate', 'aggressive'].includes(riskProfile as string)) {
-            return res.status(400).json({
+            res.status(400).json({
                 success: false,
                 message: 'Valid risk profile is required (conservative, moderate, or aggressive)',
             });
+            return;
         }
 
         const recommendations = datasetService.getPortfolioRecommendations(
@@ -151,19 +155,20 @@ export const getStockData = async (req: Request, res: Response) => {
 /**
  * Get benefits comparison
  */
-export const getBenefitsComparison = async (req: Request, res: Response) => {
+export const getBenefitsComparison = async (req: Request, res: Response): Promise<void> => {
     try {
         const { jobIds } = req.query;
 
         if (!jobIds) {
             // Return general benefits statistics
             const stats = datasetService.getBenefitsStats();
-            return res.json({
+            res.json({
                 success: true,
                 data: {
                     stats,
                 },
             });
+            return;
         }
 
         const jobIdArray = (jobIds as string).split(',');
@@ -232,14 +237,15 @@ export const getH1BStats = async (req: Request, res: Response) => {
 /**
  * Search H1B job titles
  */
-export const searchH1B = async (req: Request, res: Response) => {
+export const searchH1B = async (req: Request, res: Response): Promise<void> => {
     try {
         const { q } = req.query;
         if (!q) {
-            return res.status(400).json({
+            res.status(400).json({
                 success: false,
                 message: 'Search query is required',
             });
+            return;
         }
         const results = await datasetService.searchH1B(q as string);
         res.json({
@@ -254,3 +260,130 @@ export const searchH1B = async (req: Request, res: Response) => {
         });
     }
 };
+
+/**
+ * Get macroeconomic employment risk & World Bank unemployment data
+ */
+export const getMacroEmployment = async (_req: Request, res: Response) => {
+    try {
+        const macroRisk = datasetService.getMacroUnemploymentRisk();
+        res.json({
+            success: true,
+            data: macroRisk,
+        });
+    } catch (error) {
+        logger.error({ message: 'Error in getMacroEmployment', error });
+        res.status(500).json({
+            success: false,
+            message: 'Failed to get macroeconomic employment data',
+        });
+    }
+};
+
+/**
+ * Get Indian personal finance benchmarks or compare a profile
+ */
+export const getIndianFinanceBenchmarks = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { tier, income, savingsRate, discretionaryRatio } = req.query;
+
+        if (income && savingsRate) {
+            const comparison = datasetService.compareAgainstBenchmark({
+                income: parseFloat(income as string),
+                savingsRate: parseFloat(savingsRate as string),
+                discretionaryRatio: discretionaryRatio ? parseFloat(discretionaryRatio as string) : undefined,
+                cityTier: tier as string | undefined,
+            });
+            res.json({
+                success: true,
+                data: comparison,
+            });
+            return;
+        }
+
+        const benchmarks = datasetService.getIndianFinanceBenchmarks(tier as string | undefined);
+        res.json({
+            success: true,
+            data: benchmarks,
+        });
+    } catch (error) {
+        logger.error({ message: 'Error in getIndianFinanceBenchmarks', error });
+        res.status(500).json({
+            success: false,
+            message: 'Failed to get Indian finance benchmarks',
+        });
+    }
+};
+
+/**
+ * Get monthly spending seasonality and inflation indicators
+ */
+export const getSpendingSeasonality = async (_req: Request, res: Response) => {
+    try {
+        const seasonality = datasetService.getMonthlySpendingTrends();
+        res.json({
+            success: true,
+            data: seasonality,
+        });
+    } catch (error) {
+        logger.error({ message: 'Error in getSpendingSeasonality', error });
+        res.status(500).json({
+            success: false,
+            message: 'Failed to get spending seasonality data',
+        });
+    }
+};
+
+/**
+ * Get career skill gap and target role recommendation
+ */
+export const getCareerSkillGap = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { targetRole, skills } = req.query;
+
+        if (!targetRole) {
+            res.status(400).json({
+                success: false,
+                message: 'Target role is required',
+            });
+            return;
+        }
+
+        const userSkills = skills
+            ? (skills as string).split(',').map(s => s.trim()).filter(Boolean)
+            : [];
+
+        const gapAnalysis = datasetService.getCareerSkillGap(targetRole as string, userSkills);
+        res.json({
+            success: true,
+            data: gapAnalysis,
+        });
+    } catch (error) {
+        logger.error({ message: 'Error in getCareerSkillGap', error });
+        res.status(500).json({
+            success: false,
+            message: 'Failed to analyze career skill gap',
+        });
+    }
+};
+
+/**
+ * Get resume domains and top extracted technical keywords
+ */
+export const getResumeDomains = async (req: Request, res: Response) => {
+    try {
+        const { category } = req.query;
+        const domainData = datasetService.getResumeDomainKeywords(category as string | undefined);
+        res.json({
+            success: true,
+            data: domainData,
+        });
+    } catch (error) {
+        logger.error({ message: 'Error in getResumeDomains', error });
+        res.status(500).json({
+            success: false,
+            message: 'Failed to get resume domain keywords',
+        });
+    }
+};
+

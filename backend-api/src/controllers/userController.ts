@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { query } from '../config/db';
-import { logger } from '../utils/logger';
-import { cache } from '../config/cache';
+import { query } from '../config/db.js';
+import { logger } from '../utils/logger.js';
+import { cache } from '../config/cache.js';
 
-export const getProfile = async (req: Request, res: Response) => {
+export const getProfile = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = (req as any).userId;
     const cacheKey = `user_profile_${userId}`;
@@ -25,7 +25,8 @@ export const getProfile = async (req: Request, res: Response) => {
       logger.info(`User profile query for user ${userId} took ${queryDuration}ms`);
 
       if (result.rows.length === 0) {
-        return res.status(404).json({ error: 'User not found' });
+        res.status(404).json({ error: 'User not found' });
+        return;
       }
 
       const row = result.rows[0];

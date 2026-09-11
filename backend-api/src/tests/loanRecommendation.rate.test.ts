@@ -1,4 +1,4 @@
-import { buildLoanRecommendation } from '../services/loanRecommendationService';
+import { buildLoanRecommendation } from '../services/loanRecommendationService.js';
 
 describe('loanRecommendationService interest pricing', () => {
   test('higher risk profile gets higher recommended interest rate', async () => {

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { AccountabilityService } from '../services/accountabilityService';
-import { DatabaseService } from '../services/databaseService';
+import { AccountabilityService } from '../services/accountabilityService.js';
+import { DatabaseService } from '../services/databaseService.js';
 
 describe('FinFolio Phase 4: Accountability Engine', () => {
   const testUserId = 88;

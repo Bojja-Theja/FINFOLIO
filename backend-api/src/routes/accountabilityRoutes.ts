@@ -12,8 +12,8 @@ import {
   recordPartnerDecision,
   getNotifications,
   markNotificationRead,
-} from '../controllers/accountabilityController';
-import { optionalAuthMiddleware, requireAuthMiddleware } from '../middleware/optionalAuthMiddleware';
+} from '../controllers/accountabilityController.js';
+import { optionalAuthMiddleware, requireAuthMiddleware } from '../middleware/optionalAuthMiddleware.js';
 
 const router = Router();
 

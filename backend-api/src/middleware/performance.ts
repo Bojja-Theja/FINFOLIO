@@ -6,8 +6,8 @@ interface PerformanceMetrics {
     statusCode: number;
     responseTime: number;
     timestamp: Date;
-    userAgent?: string;
-    ip?: string;
+    userAgent?: string | undefined;
+    ip?: string | undefined;
 }
 
 class PerformanceMonitor {

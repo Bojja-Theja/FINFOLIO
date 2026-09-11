@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { ImpactAnalysisService } from '../services/impactAnalysisService';
-import { WithdrawalService } from '../services/withdrawalService';
-import { WalletService } from '../services/walletService';
-import { AccountabilityService } from '../services/accountabilityService';
-import { DatabaseService } from '../services/databaseService';
+import { ImpactAnalysisService } from '../services/impactAnalysisService.js';
+import { WithdrawalService } from '../services/withdrawalService.js';
+import { WalletService } from '../services/walletService.js';
+import { AccountabilityService } from '../services/accountabilityService.js';
+import { DatabaseService } from '../services/databaseService.js';
 
 describe('FinFolio Phase 5: Withdrawal + Deterministic Impact Analysis', () => {
   const userId = 101;

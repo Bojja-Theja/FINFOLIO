@@ -3,7 +3,7 @@ import { createClient, RedisClientType } from 'redis';
 interface CacheConfig {
   host: string;
   port: number;
-  password?: string;
+  password?: string | undefined;
   db?: number;
   ttl: {
     default: number;
@@ -47,9 +47,13 @@ class CacheService {
         socket: {
           host: this.config.host,
           port: this.config.port,
+          reconnectStrategy: (retries) => {
+            if (retries >= 1) return false;
+            return 200;
+          },
         },
-        password: this.config.password,
-        database: this.config.db,
+        ...(this.config.password ? { password: this.config.password } : {}),
+        ...(this.config.db !== undefined ? { database: this.config.db } : {}),
       });
 
       this.client.on('error', (err: any) => {

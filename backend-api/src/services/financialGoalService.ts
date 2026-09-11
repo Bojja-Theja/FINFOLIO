@@ -1,14 +1,14 @@
-import { query } from '../config/db';
-import { logger } from '../utils/logger';
-import { DatabaseService } from './databaseService';
-import { WalletService } from './walletService';
+import { query } from '../config/db.js';
+import { logger } from '../utils/logger.js';
+import { DatabaseService } from './databaseService.js';
+import { WalletService } from './walletService.js';
 import {
   FinancialGoal,
   FinancialGoalWithCalculations,
   GoalCalculations,
   FinancialFoundationSummary,
   GoalPriority,
-} from '../models/FinancialGoal';
+} from '../models/FinancialGoal.js';
 
 // In-memory fallback for testing and offline demo
 const inMemoryGoals: FinancialGoal[] = [];

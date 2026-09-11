@@ -1,0 +1,546 @@
+[
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2024",
+    "value": 4.173,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2023",
+    "value": 4.172,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2022",
+    "value": 4.822,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2021",
+    "value": 6.38,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2020",
+    "value": 7.859,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2019",
+    "value": 6.51,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2018",
+    "value": 7.652,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2017",
+    "value": 7.626,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2016",
+    "value": 7.611,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2015",
+    "value": 7.629,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2014",
+    "value": 7.656,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2013",
+    "value": 7.678,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2012",
+    "value": 7.645,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2011",
+    "value": 7.609,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2010",
+    "value": 7.631,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2009",
+    "value": 7.636,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2008",
+    "value": 7.629,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2007",
+    "value": 7.562,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2006",
+    "value": 7.553,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2005",
+    "value": 7.551,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2004",
+    "value": 7.598,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2003",
+    "value": 7.633,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2002",
+    "value": 7.681,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2001",
+    "value": 7.611,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "2000",
+    "value": 7.589,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "1999",
+    "value": 7.583,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "1998",
+    "value": 7.596,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "1997",
+    "value": 7.574,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "1996",
+    "value": 7.537,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "1995",
+    "value": 7.57,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "1994",
+    "value": 7.593,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "1993",
+    "value": 7.662,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "1992",
+    "value": 7.649,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  },
+  {
+    "indicator": {
+      "id": "SL.UEM.TOTL.ZS",
+      "value": "Unemployment, total (% of total labor force) (modeled ILO estimate)"
+    },
+    "country": {
+      "id": "IN",
+      "value": "India"
+    },
+    "countryiso3code": "IND",
+    "date": "1991",
+    "value": 7.641,
+    "unit": "",
+    "obs_status": "",
+    "decimal": 1
+  }
+]

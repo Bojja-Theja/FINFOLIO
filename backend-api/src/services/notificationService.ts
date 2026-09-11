@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/logger.js';
 
 interface EmailConfig {
   host: string;

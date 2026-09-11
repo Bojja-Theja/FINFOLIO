@@ -1,4 +1,4 @@
-import { DatabaseService } from './databaseService';
+import { DatabaseService } from './databaseService.js';
 
 export const getDebtSnowballRecommendation = async (userId: number) => {
   // Mock debts for demo - in real app, this would come from database

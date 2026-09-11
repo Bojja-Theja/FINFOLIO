@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { FinancialGoalService } from '../services/financialGoalService';
-import { DatabaseService } from '../services/databaseService';
-import { WalletService } from '../services/walletService';
+import { FinancialGoalService } from '../services/financialGoalService.js';
+import { DatabaseService } from '../services/databaseService.js';
+import { WalletService } from '../services/walletService.js';
 
 describe('FinFolio Phase 2: Financial Foundation & Deterministic Goals', () => {
   beforeEach(() => {

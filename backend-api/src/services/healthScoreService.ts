@@ -1,5 +1,5 @@
-import { DatabaseService } from './databaseService';
-import { cache } from '../config/cache';
+import { DatabaseService } from './databaseService.js';
+import { cache } from '../config/cache.js';
 
 interface FinancialData {
   monthlyIncome: number;

@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { getProfile, updateProfile } from '../controllers/userController';
-import { requireAuthMiddleware } from '../middleware/optionalAuthMiddleware';
+import { getProfile, updateProfile } from '../controllers/userController.js';
+import { requireAuthMiddleware } from '../middleware/optionalAuthMiddleware.js';
 
 const router = Router();
 

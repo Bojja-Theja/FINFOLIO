@@ -8,7 +8,12 @@ import {
     getInsightsSummary,
     getH1BStats,
     searchH1B,
-} from '../controllers/insightsController';
+    getMacroEmployment,
+    getIndianFinanceBenchmarks,
+    getSpendingSeasonality,
+    getCareerSkillGap,
+    getResumeDomains,
+} from '../controllers/insightsController.js';
 
 const router = express.Router();
 
@@ -73,5 +78,43 @@ router.get('/h1b-stats', getH1BStats);
  * @access  Public
  */
 router.get('/h1b-search', searchH1B);
+
+/**
+ * @route   GET /api/insights/macro-employment
+ * @desc    Get macroeconomic employment risk and World Bank unemployment indicators
+ * @access  Public
+ */
+router.get('/macro-employment', getMacroEmployment);
+
+/**
+ * @route   GET /api/insights/indian-finance-benchmarks
+ * @desc    Get Indian personal finance benchmarks by city tier (or compare user profile)
+ * @query   tier, income, savingsRate, discretionaryRatio
+ * @access  Public
+ */
+router.get('/indian-finance-benchmarks', getIndianFinanceBenchmarks);
+
+/**
+ * @route   GET /api/insights/spending-seasonality
+ * @desc    Get monthly spending seasonality, inflation indicators, and festival spikes
+ * @access  Public
+ */
+router.get('/spending-seasonality', getSpendingSeasonality);
+
+/**
+ * @route   GET /api/insights/career-skill-gap
+ * @desc    Get career recommendation, skill gap analysis, and salary progression
+ * @query   targetRole, skills
+ * @access  Public
+ */
+router.get('/career-skill-gap', getCareerSkillGap);
+
+/**
+ * @route   GET /api/insights/resume-domains
+ * @desc    Get resume categories and extracted domain technical keywords
+ * @query   category
+ * @access  Public
+ */
+router.get('/resume-domains', getResumeDomains);
 
 export default router;

@@ -1,5 +1,5 @@
 
-import { query } from '../config/db';
+import { query } from '../config/db.js';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 

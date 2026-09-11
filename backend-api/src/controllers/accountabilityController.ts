@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { AccountabilityService } from '../services/accountabilityService';
-import { EmergencyService } from '../services/emergencyService';
-import { logger } from '../utils/logger';
+import { AccountabilityService } from '../services/accountabilityService.js';
+import { EmergencyService } from '../services/emergencyService.js';
+import { logger } from '../utils/logger.js';
 
 export const getPartners = async (req: Request, res: Response) => {
   try {

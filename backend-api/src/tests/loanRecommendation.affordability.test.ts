@@ -1,4 +1,4 @@
-import { buildLoanRecommendation } from '../services/loanRecommendationService';
+import { buildLoanRecommendation } from '../services/loanRecommendationService.js';
 
 describe('loanRecommendationService affordability math', () => {
   test('returns FOIR and max affordable EMI boundaries', async () => {

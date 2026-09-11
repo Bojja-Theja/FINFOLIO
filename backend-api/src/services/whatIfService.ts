@@ -1,4 +1,4 @@
-import { DatabaseService } from './databaseService';
+import { DatabaseService } from './databaseService.js';
 
 export const monteCarloProjection = async (
   userId: number,

@@ -1,14 +1,14 @@
-import { DatabaseService } from './databaseService';
-import { WalletService } from './walletService';
-import { FinancialGoalService } from './financialGoalService';
-import { ImpactAnalysisService, PreTransactionImpact } from './impactAnalysisService';
+import { DatabaseService } from './databaseService.js';
+import { WalletService } from './walletService.js';
+import { FinancialGoalService } from './financialGoalService.js';
+import { ImpactAnalysisService, PreTransactionImpact } from './impactAnalysisService.js';
 import {
   EmergencyAnomalyResult,
   PartnerNotification,
   WithdrawalRequest,
-} from '../models/Accountability';
-import { WalletTransaction } from '../models/Wallet';
-import { logger } from '../utils/logger';
+} from '../models/Accountability.js';
+import { WalletTransaction } from '../models/Wallet.js';
+import { logger } from '../utils/logger.js';
 
 export interface EmergencyWithdrawalResult {
   request: WithdrawalRequest;
@@ -102,7 +102,7 @@ export class EmergencyService {
       userId,
       parsedAmount,
       wallet.balance,
-      impact.runwayAfter
+      impact.runwayAfterMonths
     );
 
     // Notify accountability partner AFTER execution
@@ -124,7 +124,7 @@ export class EmergencyService {
             amount: parsedAmount,
             category,
             reason: trimmedReason,
-            runwayAfterMonths: impact.runwayAfter,
+            runwayAfterMonths: impact.runwayAfterMonths,
             timestamp: new Date(),
           },
         });
@@ -263,7 +263,7 @@ export class EmergencyService {
       userId,
       0,
       wallet.balance,
-      dummyImpact.runwayBefore
+      dummyImpact.runwayBeforeMonths
     );
   }
 

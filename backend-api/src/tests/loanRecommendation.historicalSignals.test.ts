@@ -1,4 +1,4 @@
-import { buildLoanRecommendation } from '../services/loanRecommendationService';
+import { buildLoanRecommendation } from '../services/loanRecommendationService.js';
 
 describe('loanRecommendationService historical context', () => {
   test('includes historical default and benchmark approval rates', async () => {

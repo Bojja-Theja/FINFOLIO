@@ -1,5 +1,5 @@
-import { query } from '../config/db';
-import { logger } from '../utils/logger';
+import { query } from '../config/db.js';
+import { logger } from '../utils/logger.js';
 
 export interface User {
   id: number;

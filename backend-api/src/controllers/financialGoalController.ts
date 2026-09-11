@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { FinancialGoalService } from '../services/financialGoalService';
-import { logger } from '../utils/logger';
+import { FinancialGoalService } from '../services/financialGoalService.js';
+import { logger } from '../utils/logger.js';
 
 export const listGoals = async (req: Request, res: Response) => {
   try {

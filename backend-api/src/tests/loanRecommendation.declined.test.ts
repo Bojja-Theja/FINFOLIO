@@ -1,4 +1,4 @@
-import { buildLoanRecommendation } from '../services/loanRecommendationService';
+import { buildLoanRecommendation } from '../services/loanRecommendationService.js';
 
 describe('loanRecommendationService declined profile', () => {
   test('returns declined decision for stretched affordability and low credit', async () => {

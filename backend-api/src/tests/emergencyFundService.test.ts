@@ -1,4 +1,4 @@
-import { EmergencyFundService } from '../services/emergencyFundService';
+import { EmergencyFundService } from '../services/emergencyFundService.js';
 
 describe('EmergencyFundService', () => {
     test('should return "excellent" status when balance covers > 12 months', () => {

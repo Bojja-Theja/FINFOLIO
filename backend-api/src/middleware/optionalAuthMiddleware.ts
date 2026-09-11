@@ -1,16 +1,16 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { config } from "../config/env";
+import { config } from "../config/env.js";
 
 export interface AuthenticatedRequest extends Request {
-  userId?: string;
-  isGuest?: boolean;
+  userId?: string | undefined;
+  isGuest?: boolean | undefined;
   user?: {
     id: string;
     email: string | null;
     name: string;
-    isGuest?: boolean;
-  };
+    isGuest?: boolean | undefined;
+  } | undefined;
 }
 
 /**
@@ -49,7 +49,7 @@ export const optionalAuthMiddleware = async (req: AuthenticatedRequest, res: Res
       const userId = decoded.userId;
 
       // Verify user exists in database (optional check for optional middleware)
-      const { query } = await import('../config/db');
+      const { query } = await import('../config/db.js');
       const userResult = await query('SELECT id FROM users WHERE id = $1', [userId]);
 
       if (userResult.rows.length > 0) {
@@ -119,7 +119,7 @@ export const requireAuthMiddleware = async (req: AuthenticatedRequest, res: Resp
     }
 
     // Verify user exists in database (prevents errors after DB reset)
-    const { query } = await import('../config/db');
+    const { query } = await import('../config/db.js');
     const userResult = await query('SELECT id FROM users WHERE id = $1', [userId]);
 
     if (userResult.rows.length === 0) {

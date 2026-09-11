@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { ImpactAnalysisService } from '../services/impactAnalysisService';
-import { WithdrawalService } from '../services/withdrawalService';
-import { EmergencyService } from '../services/emergencyService';
-import { logger } from '../utils/logger';
+import { ImpactAnalysisService } from '../services/impactAnalysisService.js';
+import { WithdrawalService } from '../services/withdrawalService.js';
+import { EmergencyService } from '../services/emergencyService.js';
+import { logger } from '../utils/logger.js';
 
 export const analyzeImpact = async (req: Request, res: Response) => {
   try {

@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
-import { query } from '../config/db';
-import { logger } from '../utils/logger';
-import { Wallet, WalletTransaction } from '../models/Wallet';
-import { AccountabilityPartner, CommitmentRule, WithdrawalRequest, WithdrawalStatus, PartnerNotification } from '../models/Accountability';
+import { query } from '../config/db.js';
+import { logger } from '../utils/logger.js';
+import { Wallet, WalletTransaction } from '../models/Wallet.js';
+import { AccountabilityPartner, CommitmentRule, WithdrawalRequest, WithdrawalStatus, PartnerNotification } from '../models/Accountability.js';
 
 // In-memory storage for demo and test fallback purposes
 interface InMemoryUser {
@@ -189,6 +189,17 @@ export class DatabaseService {
    * Get user by email and pin for authentication
    */
   static async getUserByEmailAndPin(email: string, pin: string): Promise<{ id: number; email: string; name: string } | null> {
+    if (useInMemory) {
+      const user = inMemoryUsers.find(u => u.email === email);
+      if (user) {
+        const isMatch = await this.comparePin(pin, user.password);
+        if (isMatch) {
+          return { id: user.id, email: user.email, name: user.name };
+        }
+      }
+      return null;
+    }
+
     try {
       const result = await query(`SELECT id, email, name, pin FROM users WHERE email = $1 LIMIT 1`, [email]);
       if (result.rows.length > 0) {
@@ -221,25 +232,25 @@ export class DatabaseService {
    * Verify user PIN
    */
   static async verifyUserPin(userId: number, pin: string): Promise<boolean> {
+    if (useInMemory) {
+      const user = inMemoryUsers.find(u => u.id === userId);
+      if (user) {
+        return await this.comparePin(pin, user.password);
+      }
+      return false;
+    }
+
     try {
       const result = await query(`SELECT pin FROM users WHERE id = $1 LIMIT 1`, [userId]);
       if (result.rows.length > 0) {
         return await this.comparePin(pin, result.rows[0].pin);
       }
-      if (useInMemory) {
-        const user = inMemoryUsers.find(u => u.id === userId);
-        if (user) {
-          return await this.comparePin(pin, user.password);
-        }
-      }
       return false;
     } catch (error) {
       logger.error(`Failed to verify PIN for user ${userId}: ${error}`);
-      if (useInMemory) {
-        const user = inMemoryUsers.find(u => u.id === userId);
-        if (user) {
-          return await this.comparePin(pin, user.password);
-        }
+      const user = inMemoryUsers.find(u => u.id === userId);
+      if (user) {
+        return await this.comparePin(pin, user.password);
       }
       return false;
     }
@@ -249,6 +260,24 @@ export class DatabaseService {
    * Create guest user
    */
   static async createGuestUser(email: string, name: string): Promise<number> {
+    if (useInMemory) {
+      const existingUser = inMemoryUsers.find(u => u.email === email);
+      if (existingUser) {
+        throw new Error('Guest user already exists');
+      }
+      const hashedPin = await this.hashPin('0000');
+      const newUser: InMemoryUser = {
+        id: nextUserId++,
+        email,
+        password: hashedPin,
+        name,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      inMemoryUsers.push(newUser);
+      return newUser.id;
+    }
+
     try {
       logger.info(`Creating guest user with email: ${email}, name: ${name}`);
       const hashedPin = await this.hashPin('0000');
@@ -371,6 +400,24 @@ export class DatabaseService {
     * Create user with PIN
     */
     static async createUserWithPin(email: string, name: string, pin: string, ipAddress?: string, userAgent?: string): Promise<number> {
+    if (useInMemory) {
+      const existingUser = inMemoryUsers.find(u => u.email === email);
+      if (existingUser) {
+        throw new Error('User already exists');
+      }
+      const hashedPin = await this.hashPin(pin);
+      const newUser: InMemoryUser = {
+        id: nextUserId++,
+        email,
+        name,
+        password: hashedPin,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      inMemoryUsers.push(newUser);
+      return newUser.id;
+    }
+
     try {
       logger.info(`Creating user with email: ${email}, name: ${name}, pin length: ${pin.length}`);
       const hashedPin = await this.hashPin(pin);

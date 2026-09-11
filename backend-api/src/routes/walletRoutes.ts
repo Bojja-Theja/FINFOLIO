@@ -4,8 +4,8 @@ import {
   deposit,
   withdraw,
   getTransactions,
-} from '../controllers/walletController';
-import { optionalAuthMiddleware, requireAuthMiddleware } from '../middleware/optionalAuthMiddleware';
+} from '../controllers/walletController.js';
+import { optionalAuthMiddleware, requireAuthMiddleware } from '../middleware/optionalAuthMiddleware.js';
 
 const router = Router();
 

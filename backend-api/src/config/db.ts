@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
-import { config } from './env';
-import { logger } from '../utils/logger';
+import { config } from './env.js';
+import { logger } from '../utils/logger.js';
 
 // TODO: Replace with Prisma or TypeORM client
 export const db = new Pool({
