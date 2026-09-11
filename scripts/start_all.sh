@@ -2,7 +2,8 @@
 # FINFOLIO startup script – starts frontend, backend, and (optionally) ML service
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}") && pwd)/.."
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 FRONTEND_DIR="$ROOT_DIR/frontend"
 BACKEND_DIR="$ROOT_DIR/backend-api"
 ML_DIR="$ROOT_DIR/ml-service"
@@ -13,22 +14,22 @@ log() { echo "[FINFOLIO] $*"; }
 
 # ─── pre-flight: concurrently must be installed ───────────────────────────────
 if [[ ! -x "$CONCURRENTLY_BIN" ]]; then
-  log "ERROR: concurrently is not installed. Run: npm install (in repo root)"
+  log "ERROR: concurrently not found. Run: npm install (in repo root)"
   exit 1
 fi
 
 # ─── Build backend (always fast, ~5 s) ────────────────────────────────────────
-log "Building backend…"
-(cd "$BACKEND_DIR" && npm run build)
-log "Backend built ✓"
+log "Building backend..."
+( cd "$BACKEND_DIR" && npm run build )
+log "Backend built OK"
 
 # ─── Build frontend only if no production build exists ────────────────────────
 if [[ -f "$FRONTEND_DIR/.next/BUILD_ID" ]]; then
-  log "Frontend already built – skipping rebuild (run npm run build:frontend to force)"
+  log "Frontend already built – skipping rebuild"
 else
-  log "Building frontend (first time, may take ~2 min)…"
-  (cd "$FRONTEND_DIR" && npm run build)
-  log "Frontend built ✓"
+  log "Building frontend (first time, may take ~2 min)..."
+  ( cd "$FRONTEND_DIR" && npm run build )
+  log "Frontend built OK"
 fi
 
 # Remove stale Next.js lock if present
@@ -38,54 +39,43 @@ if [[ -f "$NEXT_LOCK" ]]; then
   rm -f "$NEXT_LOCK"
 fi
 
-# ─── Determine whether ML service is available ────────────────────────────────
+# ─── Auto-detect ML Python ────────────────────────────────────────────────────
 ML_PYTHON=""
-for candidate in "$ROOT_DIR/.venv/bin/python" \
-                 "$ROOT_DIR/../CAPSTACK/.venv/bin/python" \
-                 "$(which python3 2>/dev/null || true)"; do
+for candidate in \
+    "$ROOT_DIR/.venv/bin/python" \
+    "$ROOT_DIR/../CAPSTACK/.venv/bin/python" \
+    "$(command -v python3 2>/dev/null || true)"; do
   if [[ -x "$candidate" ]] && "$candidate" -c "import uvicorn" 2>/dev/null; then
     ML_PYTHON="$candidate"
     break
   fi
 done
 
-# ─── Build process list for concurrently ──────────────────────────────────────
-PROCESSES=()
-NAMES=()
-COLORS=()
-
-PROCESSES+=("cd '$FRONTEND_DIR' && npm run start")
-NAMES+=("frontend")
-COLORS+=("blue")
-
-PROCESSES+=("cd '$BACKEND_DIR' && npm start")
-NAMES+=("backend")
-COLORS+=("green")
+# ─── Launch all services concurrently ─────────────────────────────────────────
+log ""
+log "Starting FINFOLIO services..."
+log "  Frontend  -> http://localhost:3000"
+log "  Backend   -> http://localhost:3001"
+if [[ -n "$ML_PYTHON" ]]; then
+  log "  ML        -> http://localhost:8000"
+else
+  log "  ML        -> skipped (no Python venv with uvicorn found)"
+fi
+log ""
 
 if [[ -n "$ML_PYTHON" ]]; then
-  log "ML service available at $ML_PYTHON – starting ML service on port 8000"
-  PROCESSES+=("cd '$ML_DIR' && '$ML_PYTHON' -m uvicorn app.main:app --host 0.0.0.0 --port 8000")
-  NAMES+=("ml")
-  COLORS+=("magenta")
+  "$CONCURRENTLY_BIN" \
+    --kill-others-on-fail \
+    -n "frontend,backend,ml" \
+    -c "blue,green,magenta" \
+    "cd '$FRONTEND_DIR' && npm run start" \
+    "cd '$BACKEND_DIR' && npm start" \
+    "cd '$ML_DIR' && '$ML_PYTHON' -m uvicorn app.main:app --host 0.0.0.0 --port 8000"
 else
-  log "ML service skipped (no Python with uvicorn found – backend runs fine without it)"
+  "$CONCURRENTLY_BIN" \
+    --kill-others-on-fail \
+    -n "frontend,backend" \
+    -c "blue,green" \
+    "cd '$FRONTEND_DIR' && npm run start" \
+    "cd '$BACKEND_DIR' && npm start"
 fi
-
-# Join arrays with concurrently separator
-PROC_ARGS=()
-for p in "${PROCESSES[@]}"; do PROC_ARGS+=("$p"); done
-
-NAME_STR=$(IFS=,; echo "${NAMES[*]}")
-COLOR_STR=$(IFS=,; echo "${COLORS[*]}")
-
-log "Starting FINFOLIO services…"
-log "  • Frontend  → http://localhost:3000"
-log "  • Backend   → http://localhost:3001"
-[[ -n "$ML_PYTHON" ]] && log "  • ML service→ http://localhost:8000"
-echo ""
-
-"$CONCURRENTLY_BIN" \
-  --kill-others-on-fail \
-  -n "$NAME_STR" \
-  -c "$COLOR_STR" \
-  "${PROC_ARGS[@]}"
