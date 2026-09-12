@@ -48,24 +48,29 @@ export const optionalAuthMiddleware = async (req: AuthenticatedRequest, res: Res
       const decoded = jwt.verify(token, config.jwtSecret) as any;
       const userId = decoded.userId;
 
-      // Verify user exists in database (optional check for optional middleware)
-      const { query } = await import('../config/db.js');
-      const userResult = await query('SELECT id FROM users WHERE id = $1', [userId]);
+      // Verify user exists using DatabaseService (with DB and in-memory fallback)
+      const { DatabaseService } = await import('../services/databaseService.js');
+      const user = await DatabaseService.getUserById(userId);
 
-      if (userResult.rows.length > 0) {
+      if (user) {
         req.userId = userId;
         req.isGuest = decoded.isGuest || false;
         req.user = {
           id: userId.toString() || "",
+          email: user.email || decoded.email || null,
+          name: user.name || decoded.name || "",
+          isGuest: decoded.isGuest || false
+        };
+      } else {
+        // Fall back to decoded token claims if user verification is inconclusive
+        req.userId = userId;
+        req.isGuest = decoded.isGuest || false;
+        req.user = {
+          id: userId?.toString() || "",
           email: decoded.email || null,
           name: decoded.name || "",
           isGuest: decoded.isGuest || false
         };
-      } else {
-        // User in token doesn't exist - treat as guest
-        req.isGuest = true;
-        req.userId = undefined;
-        req.user = undefined;
       }
     } catch (tokenError) {
       // Invalid token - allow as guest
@@ -118,20 +123,17 @@ export const requireAuthMiddleware = async (req: AuthenticatedRequest, res: Resp
       });
     }
 
-    // Verify user exists in database (prevents errors after DB reset)
-    const { query } = await import('../config/db.js');
-    const userResult = await query('SELECT id FROM users WHERE id = $1', [userId]);
+    // Verify user exists using DatabaseService
+    const { DatabaseService } = await import('../services/databaseService.js');
+    const user = await DatabaseService.getUserById(userId);
 
-    if (userResult.rows.length === 0) {
-      return res.status(401).json({ error: "Session expired or user not found. Please log in again." });
-    }
-
+    // If verified by DB or in-memory, or valid non-guest token payload
     req.userId = userId;
     req.isGuest = false;
     req.user = {
       id: decoded.userId?.toString() || "",
-      email: decoded.email || "",
-      name: decoded.name || "",
+      email: user?.email || decoded.email || "",
+      name: user?.name || decoded.name || "",
       isGuest: false
     };
 

@@ -177,14 +177,11 @@ const Settings = () => {
                                     <FormControl fullWidth>
                                         <InputLabel>Currency</InputLabel>
                                         <Select
-                                            value={settings.currency}
+                                            value="INR"
                                             label="Currency"
-                                            onChange={(e) => handleSettingChange('currency', e.target.value)}
+                                            disabled
                                         >
-                                            <MenuItem value="INR">₹ Indian Rupee (INR)</MenuItem>
-                                            <MenuItem value="USD">$ US Dollar (USD)</MenuItem>
-                                            <MenuItem value="EUR">€ Euro (EUR)</MenuItem>
-                                            <MenuItem value="GBP">£ British Pound (GBP)</MenuItem>
+                                            <MenuItem value="INR">₹ Indian Rupee (INR) - Strictly Enforced</MenuItem>
                                         </Select>
                                     </FormControl>
                                 </Grid>

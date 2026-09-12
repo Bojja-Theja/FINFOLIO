@@ -80,8 +80,8 @@ export default function Register() {
           <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
             Registration Successful!
           </Typography>
-          <Typography variant="body1">
-            Redirecting to login page...
+          <Typography variant="body1" color="text.secondary">
+            Redirecting to your dashboard...
           </Typography>
         </Paper>
       </Container>

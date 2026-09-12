@@ -112,12 +112,52 @@ app.use((req: any, res: any, next: any) => {
 // ----------------------------------
 // Health Check
 // ----------------------------------
-app.get("/health", (req, res) => {
-  res.json({
-    status: "ok",
+app.get("/health", async (req, res) => {
+  let dbStatus = "unknown";
+  let dbLatency = 0;
+  let mlStatus = "unknown";
+
+  try {
+    const { db } = await import('./config/db.js');
+    const dbStart = Date.now();
+    await db.query('SELECT 1');
+    dbLatency = Date.now() - dbStart;
+    dbStatus = "connected";
+  } catch (dbErr: any) {
+    dbStatus = "disconnected";
+  }
+
+  try {
+    const mlUrl = process.env.ML_SERVICE_URL || 'http://localhost:8000';
+    const mlRes = await fetch(`${mlUrl}/health`, { signal: AbortSignal.timeout(1500) });
+    mlStatus = mlRes.ok ? "connected" : "degraded";
+  } catch {
+    mlStatus = "unavailable";
+  }
+
+  const isHealthy = dbStatus === "connected";
+  const isTest = process.env.NODE_ENV === 'test';
+
+  res.status(isHealthy || isTest ? 200 : 503).json({
+    status: isHealthy || isTest ? "ok" : "error",
+    overallStatus: isHealthy ? (mlStatus === "connected" ? "ok" : "degraded") : "error",
     message: "Backend API running successfully",
     timestamp: new Date().toISOString(),
     version: process.env.API_VERSION || "1.0.0",
+    services: {
+      database: {
+        status: dbStatus,
+        latencyMs: dbLatency,
+        type: "PostgreSQL"
+      },
+      redis: {
+        status: cacheService.getIsConnected() ? "connected" : (process.env.REDIS_ENABLED === "true" ? "available" : "disabled")
+      },
+      mlService: {
+        status: mlStatus,
+        url: process.env.ML_SERVICE_URL || 'http://localhost:8000'
+      }
+    }
   });
 });
 

@@ -54,7 +54,9 @@ const slideInUp = keyframes`
 `;
 
 const StyledCard = styled(Card)(({ theme }) => ({
-  background: 'linear-gradient(135deg, #FFFFFF 0%, rgba(240, 248, 255, 0.3) 100%)',
+  background: theme.palette.mode === 'light'
+    ? 'linear-gradient(135deg, #f8fafc 0%, rgba(241, 245, 249, 0.8) 100%)'
+    : `linear-gradient(135deg, ${theme.palette.background.paper} 0%, rgba(30, 41, 59, 0.7) 100%)`,
   backdropFilter: 'blur(10px)',
   borderRadius: 16,
   border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,

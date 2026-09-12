@@ -579,10 +579,10 @@ export default function AccountabilityPage() {
                         </TableCell>
                         <TableCell>
                           {rule.level === 'low'
-                            ? 'Unlimited ($10,000)'
+                            ? 'Unlimited (₹10,00,000)'
                             : rule.level === 'medium'
-                            ? `$${rule.maxInstantAmount.toFixed(2)}`
-                            : '$0.00 (Zero instant)'}
+                            ? `₹${rule.maxInstantAmount.toLocaleString('en-IN')}`
+                            : '₹0.00 (Zero instant)'}
                         </TableCell>
                         <TableCell>
                           {rule.requiresApproval ? (
@@ -636,10 +636,22 @@ export default function AccountabilityPage() {
                 <GridTyped item xs={12} sm={4}>
                   <TextField
                     fullWidth
-                    label="Amount ($)"
+                    label="Amount (₹)"
                     type="number"
                     value={evalAmount}
-                    onChange={e => setEvalAmount(e.target.value)}
+                    helperText="Min: ₹1 • Max: ₹1 Cr"
+                    inputProps={{ min: 1, max: 10000000 }}
+                    InputProps={{
+                      startAdornment: <Typography sx={{ mr: 1, fontWeight: 700, color: 'text.secondary' }}>₹</Typography>,
+                    }}
+                    onChange={e => {
+                      const val = parseFloat(e.target.value);
+                      if (!isNaN(val) && val > 10000000) {
+                        setEvalAmount('10000000');
+                      } else {
+                        setEvalAmount(e.target.value);
+                      }
+                    }}
                     size="small"
                   />
                 </GridTyped>
@@ -1093,11 +1105,24 @@ export default function AccountabilityPage() {
             {ruleLevel === 'medium' && (
               <TextField
                 fullWidth
-                label="Instant Purchase Limit ($)"
+                label="Instant Purchase Limit (₹)"
                 type="number"
                 value={ruleMaxInstant}
-                onChange={e => setRuleMaxInstant(parseFloat(e.target.value) || 0)}
-                helperText="Purchases up to this amount execute without friction; amounts above require partner approval."
+                helperText="Min: ₹0 • Max: ₹10 L. Purchases up to this amount execute without friction; amounts above require partner review."
+                inputProps={{ min: 0, max: 1000000 }}
+                InputProps={{
+                  startAdornment: <Typography sx={{ mr: 1, fontWeight: 700, color: 'primary.main' }}>₹</Typography>,
+                }}
+                onChange={e => {
+                  const val = parseFloat(e.target.value);
+                  if (!isNaN(val) && val > 1000000) {
+                    setRuleMaxInstant(1000000);
+                  } else if (!isNaN(val) && val < 0) {
+                    setRuleMaxInstant(0);
+                  } else {
+                    setRuleMaxInstant(val || 0);
+                  }
+                }}
                 sx={{ mb: 2 }}
               />
             )}

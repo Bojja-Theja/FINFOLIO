@@ -41,10 +41,8 @@ export class WalletService {
       throw new Error('Deposit amount must be strictly greater than 0');
     }
 
-    const currentWallet = await this.getWallet(userId);
-    const newBalance = Math.round((currentWallet.balance + amount) * 100) / 100;
-
-    const updatedWallet = await DatabaseService.updateWalletBalance(userId, newBalance);
+    // Atomically increment wallet balance to prevent concurrent write loss
+    const updatedWallet = await DatabaseService.atomicAddWalletBalance(userId, amount);
 
     const transaction = await DatabaseService.createWalletTransaction({
       walletId: updatedWallet.id,
@@ -57,13 +55,13 @@ export class WalletService {
       ...(referenceId !== undefined && { referenceId }),
     });
 
-    logger.info(`Deposit successful: user ${userId}, amount +${amount}, new balance: ${newBalance}`);
+    logger.info(`Deposit successful: user ${userId}, amount +${amount}, new balance: ${updatedWallet.balance}`);
     return { wallet: updatedWallet, transaction };
   }
 
   /**
    * Withdraw funds from wallet and record transaction
-   * Enforces non-negative balance invariant.
+   * Enforces non-negative balance invariant atomically.
    */
   static async withdraw(
     userId: number,
@@ -76,16 +74,8 @@ export class WalletService {
       throw new Error('Withdrawal amount must be strictly greater than 0');
     }
 
-    const currentWallet = await this.getWallet(userId);
-
-    if (currentWallet.balance < amount) {
-      throw new Error(
-        `Insufficient funds: current balance is ${currentWallet.balance}, requested ${amount}`
-      );
-    }
-
-    const newBalance = Math.round((currentWallet.balance - amount) * 100) / 100;
-    const updatedWallet = await DatabaseService.updateWalletBalance(userId, newBalance);
+    // Atomically decrement wallet balance with non-negative check
+    const updatedWallet = await DatabaseService.atomicDeductWalletBalance(userId, amount);
 
     const transaction = await DatabaseService.createWalletTransaction({
       walletId: updatedWallet.id,
@@ -98,7 +88,7 @@ export class WalletService {
       ...(referenceId !== undefined && { referenceId }),
     });
 
-    logger.info(`Withdrawal executed: user ${userId}, amount -${amount}, new balance: ${newBalance}`);
+    logger.info(`Withdrawal executed: user ${userId}, amount -${amount}, new balance: ${updatedWallet.balance}`);
     return { wallet: updatedWallet, transaction };
   }
 

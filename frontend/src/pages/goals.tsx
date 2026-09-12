@@ -22,6 +22,10 @@ import {
   CircularProgress,
   Alert,
   Tooltip,
+  Switch,
+  FormControlLabel,
+  Slider,
+  alpha,
 } from '@mui/material';
 import {
   Add,
@@ -32,7 +36,10 @@ import {
   Refresh,
   EventNote,
   AttachMoney,
+  RocketLaunch,
+  AutoGraph,
 } from '@mui/icons-material';
+import { useCurrency } from '@/context/CurrencyContext';
 import {
   goalService,
   FinancialGoal,
@@ -58,11 +65,25 @@ const priorityOptions: { value: 'low' | 'medium' | 'high'; label: string; color:
 ];
 
 const Goals = () => {
+  const { currency, currencyInfo, formatAmount } = useCurrency();
   const [goals, setGoals] = useState<FinancialGoal[]>([]);
   const [summary, setSummary] = useState<FinancialFoundationSummary | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  // Advanced Goals Simulation State
+  const [inflationHedge, setInflationHedge] = useState<boolean>(false);
+  const [whatIfBoost, setWhatIfBoost] = useState<Record<number, number>>({});
+
+  // Milestone Badge Helper
+  const getMilestoneBadge = (pct: number) => {
+    if (pct >= 100) return { label: 'Diamond (100%)', color: '#06b6d4', icon: '💎' };
+    if (pct >= 75) return { label: 'Gold (75%)', color: '#eab308', icon: '🥇' };
+    if (pct >= 50) return { label: 'Silver (50%)', color: '#94a3b8', icon: '🥈' };
+    if (pct >= 25) return { label: 'Bronze (25%)', color: '#d97706', icon: '🥉' };
+    return null;
+  };
 
   // Dialog states
   const [openCreate, setOpenCreate] = useState<boolean>(false);
@@ -253,7 +274,7 @@ const Goals = () => {
                   Monthly Income
                 </Typography>
                 <Typography variant="h6" sx={{ fontWeight: 700, color: '#f8fafc' }}>
-                  ${summary.monthlyIncome.toLocaleString()}
+                  {formatAmount(summary.monthlyIncome)}
                 </Typography>
               </GridTyped>
               <GridTyped item xs={6} sm={4} md={2.4}>
@@ -261,7 +282,7 @@ const Goals = () => {
                   Monthly Expenses
                 </Typography>
                 <Typography variant="h6" sx={{ fontWeight: 700, color: '#f8fafc' }}>
-                  ${summary.monthlyExpenses.toLocaleString()}
+                  {formatAmount(summary.monthlyExpenses)}
                 </Typography>
               </GridTyped>
               <GridTyped item xs={6} sm={4} md={2.4}>
@@ -269,7 +290,7 @@ const Goals = () => {
                   Monthly Net Savings
                 </Typography>
                 <Typography variant="h6" sx={{ fontWeight: 700, color: '#34d399' }}>
-                  ${summary.monthlySavings.toLocaleString()}
+                  {formatAmount(summary.monthlySavings)}
                 </Typography>
               </GridTyped>
               <GridTyped item xs={6} sm={4} md={2.4}>
@@ -285,7 +306,7 @@ const Goals = () => {
                   Simulated Wallet Balance
                 </Typography>
                 <Typography variant="h6" sx={{ fontWeight: 700, color: '#fbbf24' }}>
-                  ${summary.walletBalance.toLocaleString()}
+                  {formatAmount(summary.walletBalance)}
                 </Typography>
               </GridTyped>
             </GridTyped>
@@ -308,7 +329,7 @@ const Goals = () => {
             <CardContent>
               <Typography variant="subtitle2" sx={{ opacity: 0.9 }}>Total Goal Target</Typography>
               <Typography variant="h5" sx={{ fontWeight: 800, mt: 0.5 }}>
-                ${(goals.reduce((sum, g) => sum + g.targetAmount, 0)).toLocaleString()}
+                {formatAmount(goals.reduce((sum, g) => sum + g.targetAmount, 0))}
               </Typography>
             </CardContent>
           </Card>
@@ -318,7 +339,7 @@ const Goals = () => {
             <CardContent>
               <Typography variant="subtitle2" sx={{ opacity: 0.9 }}>Total Accumulated</Typography>
               <Typography variant="h5" sx={{ fontWeight: 800, mt: 0.5 }}>
-                ${(goals.reduce((sum, g) => sum + g.currentAmount, 0)).toLocaleString()}
+                {formatAmount(goals.reduce((sum, g) => sum + g.currentAmount, 0))}
               </Typography>
             </CardContent>
           </Card>
@@ -335,6 +356,40 @@ const Goals = () => {
         </GridTyped>
       </GridTyped>
 
+      {/* Simulation & Purchasing Power Controller */}
+      <Card sx={{ mb: 4, borderRadius: 3, border: (theme) => `1px solid ${theme.palette.divider}`, bgcolor: 'background.paper' }}>
+        <CardContent sx={{ p: 2.5, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', md: 'center' }, gap: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <AutoGraph color="primary" />
+            <Box>
+              <Typography variant="subtitle1" fontWeight={800} color="text.primary">
+                Dynamic Goal Simulation & Purchasing Power Protection
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Simulate real purchasing power preservation with a 6% p.a. inflation hedge and test contribution accelerations.
+              </Typography>
+            </Box>
+          </Box>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={inflationHedge}
+                onChange={(e) => setInflationHedge(e.target.checked)}
+                color="warning"
+              />
+            }
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <Typography variant="body2" fontWeight={700} color={inflationHedge ? 'warning.main' : 'text.primary'}>
+                  Inflation Hedge (6% p.a.)
+                </Typography>
+              </Box>
+            }
+            sx={{ m: 0, bgcolor: inflationHedge ? alpha('#f59e0b', 0.1) : 'transparent', px: 1.5, py: 0.5, borderRadius: 2 }}
+          />
+        </CardContent>
+      </Card>
+
       {/* Loading state */}
       {loading && (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
@@ -344,14 +399,14 @@ const Goals = () => {
 
       {/* Goals Grid */}
       {!loading && goals.length === 0 && (
-        <Card sx={{ p: 6, textAlign: 'center', borderRadius: 3 }}>
-          <Typography variant="h6" color="textSecondary" gutterBottom>
-            No savings goals found
+        <Card sx={{ p: 6, textAlign: 'center', borderRadius: 3, border: (theme) => `1px solid ${theme.palette.divider}` }}>
+          <Typography variant="h6" fontWeight={700} gutterBottom>
+            You haven't created a financial goal yet
           </Typography>
-          <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
-            Start your accountability journey by creating your first savings goal.
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3, maxWidth: 450, mx: 'auto' }}>
+            Establish your targets for emergency funds, debt payoff, or long-term wealth to activate automated progress tracking.
           </Typography>
-          <Button variant="contained" startIcon={<Add />} onClick={() => setOpenCreate(true)}>
+          <Button variant="contained" startIcon={<Add />} onClick={() => setOpenCreate(true)} sx={{ borderRadius: 2, px: 3 }}>
             Create First Goal
           </Button>
         </Card>
@@ -371,9 +426,19 @@ const Goals = () => {
             status: 'in_progress',
           };
 
+          const milestone = getMilestoneBadge(calc.progressPercent);
+          const effectiveTarget = inflationHedge
+            ? Math.round(goal.targetAmount * Math.pow(1.06, Math.max(1, (calc.monthsRemaining || 12) / 12)))
+            : goal.targetAmount;
+          const effectiveRemaining = Math.max(0, effectiveTarget - goal.currentAmount);
+          const extraMonthly = whatIfBoost[goal.id] || 0;
+          const acceleratedMonthly = (calc.monthlySavingsNeeded || 0) + extraMonthly;
+          const acceleratedMonthsLeft = acceleratedMonthly > 0 ? Math.ceil(effectiveRemaining / acceleratedMonthly) : calc.monthsRemaining;
+          const monthsAccelerated = Math.max(0, (calc.monthsRemaining || 0) - acceleratedMonthsLeft);
+
           return (
             <GridTyped item xs={12} md={6} key={goal.id}>
-              <Card sx={{ height: '100%', borderRadius: 3, border: '1px solid #e2e8f0', position: 'relative' }}>
+              <Card sx={{ height: '100%', borderRadius: 3, border: (theme) => `1px solid ${theme.palette.divider}`, bgcolor: 'background.paper', position: 'relative' }}>
                 {/* Category Icon Badge */}
                 <Box
                   sx={{
@@ -395,10 +460,10 @@ const Goals = () => {
 
                 <CardContent sx={{ p: 3 }}>
                   <Box sx={{ pr: 6, mb: 2 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 700, color: '#1e293b', mb: 1 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.primary', mb: 1 }}>
                       {goal.name}
                     </Typography>
-                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
                       <Chip
                         label={priorityMeta.label}
                         size="small"
@@ -409,10 +474,23 @@ const Goals = () => {
                           fontSize: '0.7rem',
                         }}
                       />
+                      {milestone && (
+                        <Chip
+                          label={`${milestone.icon} ${milestone.label}`}
+                          size="small"
+                          sx={{
+                            backgroundColor: alpha(milestone.color, 0.15),
+                            color: milestone.color,
+                            fontWeight: 800,
+                            fontSize: '0.7rem',
+                            border: `1px solid ${alpha(milestone.color, 0.3)}`,
+                          }}
+                        />
+                      )}
                       {calc.monthsRemaining > 0 && (
                         <Chip
                           icon={<EventNote sx={{ fontSize: '1rem !important' }} />}
-                          label={`${calc.monthsRemaining} months left`}
+                          label={`${acceleratedMonthsLeft} months left`}
                           size="small"
                           variant="outlined"
                         />
@@ -442,7 +520,7 @@ const Goals = () => {
                       sx={{
                         height: 10,
                         borderRadius: 5,
-                        backgroundColor: '#f1f5f9',
+                        backgroundColor: (theme) => alpha(theme.palette.divider, 0.4),
                         '& .MuiLinearProgress-bar': {
                           backgroundColor: categoryMeta.color,
                           borderRadius: 5,
@@ -458,16 +536,21 @@ const Goals = () => {
                         Current Saved
                       </Typography>
                       <Typography variant="h6" sx={{ fontWeight: 700, color: categoryMeta.color }}>
-                        ${goal.currentAmount.toLocaleString()}
+                        {formatAmount(goal.currentAmount)}
                       </Typography>
                     </GridTyped>
                     <GridTyped item xs={6}>
                       <Typography variant="caption" color="textSecondary">
-                        Target Amount
+                        {inflationHedge ? 'Target (Inflation Adj.)' : 'Target Amount'}
                       </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 700, color: '#334155' }}>
-                        ${goal.targetAmount.toLocaleString()}
+                      <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.primary' }}>
+                        {formatAmount(effectiveTarget)}
                       </Typography>
+                      {inflationHedge && (
+                        <Typography variant="caption" sx={{ color: 'warning.main', fontWeight: 600, display: 'block' }}>
+                          +6% p.a. hedge
+                        </Typography>
+                      )}
                     </GridTyped>
                   </GridTyped>
 
@@ -475,22 +558,62 @@ const Goals = () => {
                   <Box
                     sx={{
                       p: 2,
-                      mb: 2.5,
+                      mb: 2,
                       borderRadius: 2,
                       backgroundColor: `${categoryMeta.color}08`,
                       border: `1px solid ${categoryMeta.color}25`,
                     }}
                   >
-                    <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, display: 'block' }}>
+                    <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>
                       MONTHLY REQUIRED CONTRIBUTION
                     </Typography>
                     <Typography variant="h6" sx={{ fontWeight: 800, color: categoryMeta.color }}>
-                      ${calc.monthlySavingsNeeded.toLocaleString()} / month
+                      {formatAmount(acceleratedMonthly)} / month
                     </Typography>
                     <Typography variant="caption" color="textSecondary">
                       Estimated completion:{' '}
-                      <span style={{ fontWeight: 600 }}>{calc.estimatedCompletionDate}</span>
+                      <span style={{ fontWeight: 600 }}>
+                        {acceleratedMonthsLeft > 0 ? `In ~${acceleratedMonthsLeft} months (${calc.estimatedCompletionDate})` : calc.estimatedCompletionDate}
+                      </span>
                     </Typography>
+                  </Box>
+
+                  {/* What-If Contribution Slider */}
+                  <Box
+                    sx={{
+                      p: 2,
+                      mb: 2,
+                      borderRadius: 2,
+                      bgcolor: (theme) => alpha(theme.palette.background.default, 0.6),
+                      border: (theme) => `1px dashed ${theme.palette.divider}`,
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+                      <Typography variant="caption" fontWeight={700} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <RocketLaunch sx={{ fontSize: 14, color: 'primary.main' }} />
+                        What-If Extra Monthly Savings:
+                      </Typography>
+                      <Typography variant="caption" fontWeight={800} color="primary.main">
+                        +{formatAmount(extraMonthly)}/mo
+                      </Typography>
+                    </Box>
+                    <Slider
+                      size="small"
+                      value={extraMonthly}
+                      min={0}
+                      max={500}
+                      step={25}
+                      onChange={(_, val) => setWhatIfBoost(prev => ({ ...prev, [goal.id]: val as number }))}
+                    />
+                    {extraMonthly > 0 && monthsAccelerated > 0 ? (
+                      <Typography variant="caption" sx={{ color: 'success.main', fontWeight: 700, display: 'block', mt: 0.5 }}>
+                        🚀 Reach goal {monthsAccelerated} months sooner! ({acceleratedMonthsLeft} mo left)
+                      </Typography>
+                    ) : (
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+                        Drag slider to test accelerated goal completion timelines
+                      </Typography>
+                    )}
                   </Box>
 
                   {/* Actions */}
@@ -545,20 +668,42 @@ const Goals = () => {
                   fullWidth
                   required
                   type="number"
-                  label="Target Amount ($)"
+                  label="Target Amount (₹)"
                   value={targetAmount}
-                  onChange={(e) => setTargetAmount(e.target.value)}
-                  inputProps={{ min: 1 }}
+                  helperText="Min: ₹1,000 • Max: ₹50 Cr"
+                  inputProps={{ min: 1000, max: 500000000 }}
+                  InputProps={{
+                    startAdornment: <Typography sx={{ mr: 1, fontWeight: 700, color: 'primary.main' }}>₹</Typography>,
+                  }}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    if (!isNaN(val) && val > 500000000) {
+                      setTargetAmount('500000000');
+                    } else {
+                      setTargetAmount(e.target.value);
+                    }
+                  }}
                 />
               </GridTyped>
               <GridTyped item xs={6}>
                 <TextField
                   fullWidth
                   type="number"
-                  label="Initial Amount ($)"
+                  label="Initial Amount (₹)"
                   value={currentAmount}
-                  onChange={(e) => setCurrentAmount(e.target.value)}
-                  inputProps={{ min: 0 }}
+                  helperText="Min: ₹0 • Max: Target"
+                  inputProps={{ min: 0, max: 500000000 }}
+                  InputProps={{
+                    startAdornment: <Typography sx={{ mr: 1, fontWeight: 700, color: 'text.secondary' }}>₹</Typography>,
+                  }}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    if (!isNaN(val) && val > 500000000) {
+                      setCurrentAmount('500000000');
+                    } else {
+                      setCurrentAmount(e.target.value);
+                    }
+                  }}
                 />
               </GridTyped>
             </GridTyped>
@@ -634,7 +779,7 @@ const Goals = () => {
                   {selectedGoal.name}
                 </Typography>
                 <Typography variant="body2" color="textSecondary" sx={{ mt: 0.5 }}>
-                  Current: ${selectedGoal.currentAmount.toLocaleString()} / Target: ${selectedGoal.targetAmount.toLocaleString()}
+                  Current: ₹{selectedGoal.currentAmount.toLocaleString('en-IN')} / Target: ₹{selectedGoal.targetAmount.toLocaleString('en-IN')}
                 </Typography>
               </Box>
             )}
@@ -643,11 +788,21 @@ const Goals = () => {
               required
               autoFocus
               type="number"
-              label="Contribution Amount ($)"
+              label="Contribution Amount (₹)"
               value={contributeAmount}
-              onChange={(e) => setContributeAmount(e.target.value)}
-              inputProps={{ min: 1 }}
-              helperText="This directly advances your goal completion date."
+              helperText="Min: ₹100 • Max: ₹1 Cr • Advances goal completion date"
+              inputProps={{ min: 100, max: 10000000 }}
+              InputProps={{
+                startAdornment: <Typography sx={{ mr: 1, fontWeight: 700, color: 'success.main' }}>₹</Typography>,
+              }}
+              onChange={(e) => {
+                const val = parseFloat(e.target.value);
+                if (!isNaN(val) && val > 10000000) {
+                  setContributeAmount('10000000');
+                } else {
+                  setContributeAmount(e.target.value);
+                }
+              }}
             />
           </DialogContent>
           <DialogActions sx={{ p: 2 }}>

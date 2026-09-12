@@ -49,6 +49,19 @@ export const guestLogin = async (req: Request, res: Response) => {
   }
 };
 
+interface LoginAttemptRecord {
+  failedAttempts: number;
+  lockedUntil?: number;
+}
+
+const loginAttemptStore = new Map<string, LoginAttemptRecord>();
+const MAX_FAILED_ATTEMPTS = 5;
+const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes
+
+export const _resetLoginAttemptsForTesting = () => {
+  loginAttemptStore.clear();
+};
+
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, pin } = req.body;
@@ -62,11 +75,41 @@ export const login = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'PIN must be exactly 4 digits' });
     }
 
+    const attemptKey = email.trim().toLowerCase();
+    const record = loginAttemptStore.get(attemptKey);
+    const now = Date.now();
+
+    // Check if account is currently locked out
+    if (record && record.lockedUntil && record.lockedUntil > now) {
+      const remainingMinutes = Math.ceil((record.lockedUntil - now) / 60000);
+      return res.status(429).json({
+        error: `Account is temporarily locked due to consecutive failed login attempts. Please retry in ${remainingMinutes} minute(s).`,
+      });
+    }
+
     // Get user by email and pin
     const user = await DatabaseService.getUserByEmailAndPin(email, pin);
     if (!user) {
-      return res.status(401).json({ error: 'Invalid email or PIN' });
+      const current = loginAttemptStore.get(attemptKey) || { failedAttempts: 0 };
+      current.failedAttempts += 1;
+
+      if (current.failedAttempts >= MAX_FAILED_ATTEMPTS) {
+        current.lockedUntil = now + LOCKOUT_DURATION_MS;
+        loginAttemptStore.set(attemptKey, current);
+        return res.status(429).json({
+          error: 'Too many failed login attempts. Account locked for 15 minutes to protect your account.',
+        });
+      }
+
+      loginAttemptStore.set(attemptKey, current);
+      const remaining = MAX_FAILED_ATTEMPTS - current.failedAttempts;
+      return res.status(401).json({
+        error: `Invalid email or PIN. ${remaining} attempt(s) remaining before temporary lockout.`,
+      });
     }
+
+    // Successful login: clear any failed attempts
+    loginAttemptStore.delete(attemptKey);
 
     // Sign token
     const token = jwt.sign(
@@ -77,7 +120,7 @@ export const login = async (req: Request, res: Response) => {
 
     return res.json({
       token,
-      user: { id: user.id.toString(), email: user.email, name: user.name, isGuest: false }
+      user: { id: user.id.toString(), email: user.email, name: user.name, isGuest: false },
     });
   } catch (error: any) {
     console.error('Login error:', error);

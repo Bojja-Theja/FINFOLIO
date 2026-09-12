@@ -28,6 +28,10 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  Slider,
+  Switch,
+  FormControlLabel,
+  alpha,
 } from '@mui/material';
 
 // Type workaround for MUI v7 Grid API issues
@@ -62,6 +66,8 @@ import {
   CheckCircleOutline,
   WarningAmber,
   Flag,
+  Tune,
+  Speed,
 } from '@mui/icons-material';
 import {
   PieChart as RechartsPie,
@@ -85,7 +91,9 @@ import FinancialCrisisSimulator from '@/components/FinancialCrisisSimulator';
 import AlertsPanel from '@/components/AlertsPanel';
 import ClientOnly from '@/components/ClientOnly';
 import WithdrawalModal from '@/components/WithdrawalModal';
+import CopilotDrawer from '@/components/CopilotDrawer';
 import { useAuth } from '@/context/AuthContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import { walletService, Wallet } from '@/services/walletService';
 import { goalService, FinancialGoal } from '@/services/goalService';
 import { accountabilityService, AccountabilityPartner } from '@/services/accountabilityService';
@@ -211,6 +219,7 @@ interface FinancialSuggestion {
 export default function Dashboard() {
   const theme = useTheme();
   const router = useRouter();
+  const { currency, currencyInfo, formatAmount } = useCurrency();
   const { user, loading: authLoading, isAuthenticated } = useAuth();
   const isGuest = user && user.isGuest === true;
   const [refreshing, setRefreshing] = useState(false);
@@ -218,6 +227,11 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState<FinancialSuggestion[]>([]);
+
+  // Interactive Runway & Income Shock Simulator
+  const [incomeShockPct, setIncomeShockPct] = useState<number>(0);
+  const [isSurvivalMode, setIsSurvivalMode] = useState<boolean>(false);
+  const [copilotOpen, setCopilotOpen] = useState<boolean>(false);
 
   // FinFolio Resilience Subsystem States
   const [wallet, setWallet] = useState<Wallet | null>(null);
@@ -304,7 +318,7 @@ export default function Dashboard() {
       suggestions.push({
         id: 6,
         title: "Boost Your Savings",
-        description: `Your current monthly savings of ₹${monthlySavings.toLocaleString()} could be increased. Aim for at least 20% of your income.`,
+        description: `Your current monthly savings of ${currencyInfo.symbol}${monthlySavings.toLocaleString()} could be increased. Aim for at least 20% of your income.`,
         priority: 'medium',
         category: 'savings',
         action: 'Set Savings Goals',
@@ -314,7 +328,7 @@ export default function Dashboard() {
       suggestions.push({
         id: 7,
         title: "Great Savings Habit!",
-        description: `You're saving ₹${monthlySavings.toLocaleString()} monthly. Consider locking a portion for long-term goals.`,
+        description: `You're saving ${currencyInfo.symbol}${monthlySavings.toLocaleString()} monthly. Consider locking a portion for long-term goals.`,
         priority: 'low',
         category: 'savings',
         action: 'Lock Savings',
@@ -345,7 +359,7 @@ export default function Dashboard() {
     }
 
     return suggestions;
-  }, []);
+  }, [currencyInfo.symbol]);
 
   const fetchDashboardData = useCallback(async () => {
     try {
@@ -512,7 +526,7 @@ export default function Dashboard() {
         maxWidth="xl"
         sx={{
           py: 4,
-          background: `linear-gradient(135deg, ${theme.palette.background.default}, ${theme.palette.grey[100]})`,
+          bgcolor: 'background.default',
           minHeight: "100vh"
         }}
       >
@@ -551,7 +565,25 @@ export default function Dashboard() {
                 </Typography>
               </Box>
 
-              <Stack direction="row" spacing={2}>
+              <Stack direction="row" spacing={1.5} alignItems="center">
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={() => setCopilotOpen(true)}
+                  startIcon={<Psychology />}
+                  sx={{
+                    bgcolor: 'white',
+                    color: 'primary.main',
+                    fontWeight: 800,
+                    borderRadius: 2,
+                    textTransform: 'none',
+                    px: 2,
+                    py: 0.8,
+                    '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' },
+                  }}
+                >
+                  Ask AI Copilot
+                </Button>
                 <Tooltip title="Refresh Data">
                   <IconButton onClick={handleRefresh} sx={{ color: "white" }}>
                     <Refresh sx={{ transform: refreshing ? "rotate(360deg)" : "none", transition: "0.5s" }} />
@@ -565,6 +597,92 @@ export default function Dashboard() {
           </Paper>
         </Box>
 
+        {/* ---- CRITICAL FINANCIAL RISK BANNER ---- */}
+        {data.survival.runwayMonths < 3.5 && (
+          <Paper
+            elevation={0}
+            sx={{
+              p: 2.5,
+              mb: 3,
+              borderRadius: 3,
+              border: '1px solid',
+              borderColor: 'warning.main',
+              bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'rgba(245, 158, 11, 0.1)' : '#fffbeb'),
+              display: 'flex',
+              flexDirection: { xs: 'column', md: 'row' },
+              justifyContent: 'space-between',
+              alignItems: { xs: 'flex-start', md: 'center' },
+              gap: 2,
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <WarningAmber color="warning" />
+              <Box>
+                <Typography variant="subtitle2" fontWeight="800">
+                  ⚠️ ELEVATED RUNWAY ALERT: Reserve Covers Only {data.survival.runwayMonths.toFixed(1)} Months
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Institutional benchmarks advise a minimum of 3 to 6 months of living expenses to absorb layoff shocks.
+                </Typography>
+              </Box>
+            </Box>
+            <Stack direction="row" spacing={1}>
+              <Button size="small" variant="contained" color="warning" href="/emergency" sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 700 }}>
+                Top Up Buffer
+              </Button>
+              <Button size="small" variant="outlined" color="inherit" onClick={() => setCopilotOpen(true)} sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 700 }}>
+                Ask Copilot
+              </Button>
+            </Stack>
+          </Paper>
+        )}
+
+        {/* ---- QUICK ACTION TRIAGE BAR ---- */}
+        <Paper
+          elevation={0}
+          sx={{
+            p: 2,
+            mb: 4,
+            borderRadius: 3,
+            border: '1px solid',
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 1.5,
+          }}
+        >
+          <Typography variant="caption" fontWeight="800" color="text.secondary" sx={{ textTransform: 'uppercase', letterSpacing: 0.5, px: 1 }}>
+            ⚡ Resilience Command Bar
+          </Typography>
+          <Stack direction="row" spacing={1} flexWrap="wrap">
+            <Button size="small" variant="outlined" startIcon={<Shield />} href="/emergency" sx={{ borderRadius: 2, textTransform: 'none' }}>
+              Emergency Buffer
+            </Button>
+            <Button
+              size="small"
+              variant="contained"
+              color="primary"
+              startIcon={<Psychology />}
+              onClick={() => setCopilotOpen(true)}
+              sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 700 }}
+            >
+              AI Copilot
+            </Button>
+            <Button size="small" variant="outlined" startIcon={<Tune />} href="/budget-planner" sx={{ borderRadius: 2, textTransform: 'none' }}>
+              Zero-Based Budget
+            </Button>
+            <Button size="small" variant="outlined" startIcon={<AccountBalanceWallet />} href="/debt-dashboard" sx={{ borderRadius: 2, textTransform: 'none' }}>
+              Debt Avalanche
+            </Button>
+            <Button size="small" variant="outlined" startIcon={<Assessment />} href="/assessment" sx={{ borderRadius: 2, textTransform: 'none' }}>
+              Layoff Audit
+            </Button>
+          </Stack>
+        </Paper>
+
         {/* ---- TOP METRICS GRID (FINFOLIO 4 PILLARS) ---- */}
         <GridTyped container spacing={3} sx={{ mb: 4 }}>
           {/* 1. Health Score */}
@@ -574,13 +692,13 @@ export default function Dashboard() {
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                transition: '0.3s ease',
-                background: (theme: any) => `linear-gradient(135deg, ${theme.palette.background.paper}, ${theme.palette.grey[100]})`,
+                transition: '0.25s ease',
+                bgcolor: 'background.paper',
                 border: (theme: any) => `1px solid ${theme.palette.divider}`,
                 borderRadius: 3,
                 '&:hover': {
-                  transform: 'translateY(-6px)',
-                  boxShadow: (theme: any) => theme.shadows[8],
+                  transform: 'translateY(-4px)',
+                  boxShadow: (theme: any) => theme.shadows[4],
                   borderColor: (theme: any) => theme.palette.primary.main
                 }
               }}>
@@ -610,13 +728,13 @@ export default function Dashboard() {
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                transition: '0.3s ease',
-                background: (theme: any) => `linear-gradient(135deg, ${theme.palette.background.paper}, ${theme.palette.grey[100]})`,
+                transition: '0.25s ease',
+                bgcolor: 'background.paper',
                 border: (theme: any) => `1px solid ${theme.palette.divider}`,
                 borderRadius: 3,
                 '&:hover': {
-                  transform: 'translateY(-6px)',
-                  boxShadow: (theme: any) => theme.shadows[8],
+                  transform: 'translateY(-4px)',
+                  boxShadow: (theme: any) => theme.shadows[4],
                   borderColor: (theme: any) => theme.palette.success.main
                 }
               }}>
@@ -627,8 +745,8 @@ export default function Dashboard() {
                     </Typography>
                     <AccountBalanceWallet color="success" />
                   </Box>
-                  <Typography variant="h4" fontWeight={800} color="success.dark" sx={{ my: 1 }}>
-                    ${(wallet?.balance ?? resilience?.deterministicBase?.walletBalance ?? 2450).toFixed(2)}
+                  <Typography variant="h4" fontWeight={800} color="success.main" sx={{ my: 1 }} className="font-tabular">
+                    {formatAmount(wallet?.balance ?? resilience?.deterministicBase?.walletBalance ?? 2450)}
                   </Typography>
                   <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
                     <Button
@@ -664,13 +782,13 @@ export default function Dashboard() {
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                transition: '0.3s ease',
-                background: (theme: any) => `linear-gradient(135deg, ${theme.palette.background.paper}, ${theme.palette.grey[100]})`,
+                transition: '0.25s ease',
+                bgcolor: 'background.paper',
                 border: (theme: any) => `1px solid ${theme.palette.divider}`,
                 borderRadius: 3,
                 '&:hover': {
-                  transform: 'translateY(-6px)',
-                  boxShadow: (theme: any) => theme.shadows[8],
+                  transform: 'translateY(-4px)',
+                  boxShadow: (theme: any) => theme.shadows[4],
                   borderColor: (theme: any) => theme.palette.warning.main
                 }
               }}>
@@ -682,7 +800,7 @@ export default function Dashboard() {
                     <HourglassEmpty color="warning" />
                   </Box>
                   <AnimatedNumber
-                    value={Math.round((resilience?.deterministicBase?.runwayMonths ?? data.survival?.months ?? 4.8) * 10) / 10}
+                    value={Math.round((resilience?.deterministicBase?.runwayMonths ?? data?.survival?.months ?? 4.8) * 10) / 10}
                     suffix=" Mo"
                   />
                   <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mt: 1 }}>
@@ -710,13 +828,13 @@ export default function Dashboard() {
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                transition: '0.3s ease',
-                background: (theme: any) => `linear-gradient(135deg, ${theme.palette.background.paper}, ${theme.palette.grey[100]})`,
+                transition: '0.25s ease',
+                bgcolor: 'background.paper',
                 border: (theme: any) => `1px solid ${theme.palette.divider}`,
                 borderRadius: 3,
                 '&:hover': {
-                  transform: 'translateY(-6px)',
-                  boxShadow: (theme: any) => theme.shadows[8],
+                  transform: 'translateY(-4px)',
+                  boxShadow: (theme: any) => theme.shadows[4],
                   borderColor: (theme: any) => theme.palette.info.main
                 }
               }}>
@@ -739,6 +857,138 @@ export default function Dashboard() {
             </Grow>
           </GridTyped>
         </GridTyped>
+
+        {/* ---- RUNWAY SENSITIVITY & INCOME SHOCK STRESS-TESTER ---- */}
+        {(() => {
+          const baselineRunway = Number(resilience?.deterministicBase?.runwayMonths ?? data?.survival?.months ?? 4.8);
+          const currentLiquidity = Number(wallet?.balance ?? resilience?.deterministicBase?.walletBalance ?? 2450);
+          const estimatedMonthlyBurn = baselineRunway > 0 ? (currentLiquidity / baselineRunway) : 2500;
+          const effectiveMonthlyBurn = isSurvivalMode ? estimatedMonthlyBurn * 0.70 : estimatedMonthlyBurn;
+          const burnMultiplier = 1 + (incomeShockPct / 100) * 0.8;
+          const shockedRunway = effectiveMonthlyBurn > 0 
+            ? Math.max(0.1, (currentLiquidity / (effectiveMonthlyBurn * burnMultiplier)))
+            : 0;
+          const runwayDelta = shockedRunway - baselineRunway;
+
+          return (
+            <Paper
+              elevation={0}
+              sx={{
+                p: 3,
+                mb: 4,
+                borderRadius: 3,
+                border: '1px solid',
+                borderColor: shockedRunway < 3 ? 'error.main' : shockedRunway < 6 ? 'warning.main' : 'divider',
+                bgcolor: 'background.paper',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', md: 'center' }, gap: 2, mb: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <Avatar sx={{ bgcolor: alpha(theme.palette.primary.main, 0.15), color: 'primary.main', width: 44, height: 44 }}>
+                    <Tune />
+                  </Avatar>
+                  <Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="h6" fontWeight={800}>
+                        Runway Sensitivity & Income Shock Stress-Tester
+                      </Typography>
+                      <Chip
+                        size="small"
+                        label="Live Simulator"
+                        color={shockedRunway >= 6 ? 'success' : shockedRunway >= 3 ? 'warning' : 'error'}
+                        sx={{ fontWeight: 700 }}
+                      />
+                    </Box>
+                    <Typography variant="body2" color="text.secondary">
+                      Simulate income reductions and test how Survival Mode spending reductions protect your liquid buffer.
+                    </Typography>
+                  </Box>
+                </Box>
+
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={isSurvivalMode}
+                      onChange={(e) => setIsSurvivalMode(e.target.checked)}
+                      color="warning"
+                    />
+                  }
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      <Speed sx={{ fontSize: 18, color: isSurvivalMode ? 'warning.main' : 'text.secondary' }} />
+                      <Typography variant="body2" fontWeight={700} color={isSurvivalMode ? 'warning.main' : 'text.primary'}>
+                        Survival Mode (-30% Burn)
+                      </Typography>
+                    </Box>
+                  }
+                  sx={{ m: 0, bgcolor: isSurvivalMode ? alpha(theme.palette.warning.main, 0.1) : 'transparent', px: 1.5, py: 0.5, borderRadius: 2 }}
+                />
+              </Box>
+
+              <GridTyped container spacing={3} alignItems="center">
+                <GridTyped item xs={12} md={6}>
+                  <Typography variant="subtitle2" fontWeight={700} gutterBottom>
+                    Simulated Income Reduction: <span style={{ color: incomeShockPct > 0 ? theme.palette.error.main : 'inherit' }}>-{incomeShockPct}%</span>
+                  </Typography>
+                  <Slider
+                    value={incomeShockPct}
+                    onChange={(_: any, val: any) => setIncomeShockPct(val as number)}
+                    min={0}
+                    max={50}
+                    step={5}
+                    marks={[
+                      { value: 0, label: '0% Normal' },
+                      { value: 25, label: '-25% Paycut' },
+                      { value: 50, label: '-50% Crisis' },
+                    ]}
+                    valueLabelDisplay="auto"
+                    valueLabelFormat={(v: any) => `-${v}%`}
+                    sx={{
+                      color: incomeShockPct > 25 ? 'error.main' : incomeShockPct > 0 ? 'warning.main' : 'primary.main',
+                    }}
+                  />
+                </GridTyped>
+
+                <GridTyped item xs={12} md={6}>
+                  <Box sx={{
+                    display: 'grid',
+                    gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                    gap: 2,
+                    p: 2,
+                    borderRadius: 2,
+                    bgcolor: alpha(theme.palette.background.default, 0.6),
+                    border: `1px solid ${theme.palette.divider}`
+                  }}>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ textTransform: 'uppercase' }}>
+                        Stressed Runway
+                      </Typography>
+                      <Typography variant="h4" fontWeight={900} color={shockedRunway >= 6 ? 'success.main' : shockedRunway >= 3 ? 'warning.main' : 'error.main'}>
+                        {shockedRunway.toFixed(1)} <Typography component="span" variant="h6" fontWeight={700}>Mo</Typography>
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: runwayDelta < 0 ? 'error.main' : 'text.secondary', fontWeight: 600 }}>
+                        {runwayDelta < 0 ? `${runwayDelta.toFixed(1)} mo vs normal` : 'Nominal baseline'}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ textTransform: 'uppercase' }}>
+                        Effective Monthly Burn
+                      </Typography>
+                      <Typography variant="h5" fontWeight={800} color="text.primary" sx={{ my: 0.5 }}>
+                        {formatAmount(effectiveMonthlyBurn)}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {isSurvivalMode ? 'Strict necessities (-30%)' : 'Standard baseline spend'}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </GridTyped>
+              </GridTyped>
+            </Paper>
+          );
+        })()}
 
         {/* ---- FINFOLIO ACCOUNTABILITY & COMMITMENT RULES BAR ---- */}
         <Paper
@@ -858,7 +1108,7 @@ export default function Dashboard() {
               {
                 id: '1',
                 title: 'Financial Runway Outlook',
-                fact: 'You currently have 4.8 months of essential expenses secured in liquid reserves ($2,450.00 wallet liquidity).',
+                fact: 'You currently have 4.8 months of essential expenses secured in liquid reserves (₹2,45,000 wallet liquidity).',
                 consequence: 'Under stress conditions with sudden expense shocks, your runway adjusts to 3.8 months.',
                 actionableGuidance: 'Maintaining steady monthly allocations ensures your emergency buffer remains insulated.',
                 sentiment: 'positive',
@@ -867,7 +1117,7 @@ export default function Dashboard() {
                 id: '2',
                 title: 'Savings Trajectory & Goal Attainment',
                 fact: '2 of 3 target savings goals are currently on track, with an overall portfolio progress of 44.1%.',
-                consequence: 'At your steady savings rate of 40.4%, you are adding $21,000 toward financial resilience every month.',
+                consequence: 'At your steady savings rate of 40.4%, you are adding ₹21,000 toward financial resilience every month.',
                 actionableGuidance: 'Continue automated transfers to preserve projected completion dates.',
                 sentiment: 'positive',
               },
@@ -1591,11 +1841,23 @@ export default function Dashboard() {
             <TextField
               autoFocus
               margin="dense"
-              label="Deposit Amount ($)"
+              label="Deposit Amount (₹)"
               type="number"
               fullWidth
               value={depositAmount}
-              onChange={(e) => setDepositAmount(e.target.value)}
+              helperText="Min: ₹1 • Max: ₹1 Cr per transaction"
+              inputProps={{ min: 1, max: 10000000 }}
+              InputProps={{
+                startAdornment: <Typography sx={{ mr: 1, fontWeight: 700, color: 'success.main' }}>₹</Typography>,
+              }}
+              onChange={(e) => {
+                const val = parseFloat(e.target.value);
+                if (!isNaN(val) && val > 10000000) {
+                  setDepositAmount('10000000');
+                } else {
+                  setDepositAmount(e.target.value);
+                }
+              }}
             />
           </DialogContent>
           <DialogActions sx={{ px: 3, pb: 2 }}>
@@ -1610,7 +1872,20 @@ export default function Dashboard() {
             </Button>
           </DialogActions>
         </Dialog>
-      </Container >
+
+        {/* ---- FINFOLIO AI COPILOT DRAWER ---- */}
+        <CopilotDrawer
+          open={copilotOpen}
+          onClose={() => setCopilotOpen(false)}
+          userContext={{
+            monthlyIncome: Number(data?.survival?.monthlyIncome) || 5500,
+            monthlyExpenses: Number(data?.survival?.monthlyExpenses) || 3200,
+            emergencyFund: Number(data?.survival?.emergencyFund) || (wallet?.balance ?? 12000),
+            totalDebt: Number(data?.survival?.totalDebt) || 18000,
+            runwayMonths: Number(data?.survival?.months || data?.survival?.runwayMonths) || 3.75,
+          }}
+        />
+      </Container>
     </>
   );
 }

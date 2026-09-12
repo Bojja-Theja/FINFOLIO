@@ -28,13 +28,40 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Environment & Secrets
+# Environment & Secrets (Zero Credentials In Repo)
 .env
+.env.*
+*.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 !*.env.example
+!*.env.template
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+*.jks
+*.keystore
+id_rsa*
+.secrets*
+credentials.json
+serviceAccountKey*.json
+service-account*.json
+token.json
+client_secret*.json
+
+# Cache & Build Tools
+.turbo/
+.vercel/
+.output/
+.serverless/
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
 
 # Python & ML
 __pycache__/

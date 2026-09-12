@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { Box, Container, Typography, Grid, Card, CardContent, CardMedia, Chip, TextField, InputAdornment, Tabs, Tab, LinearProgress, Button } from '@mui/material';
-import { Search, PlayCircle, Article, TrendingUp, School, Timer } from '@mui/icons-material';
+import { Search, PlayCircle, Article, TrendingUp, School, Timer, WorkOutline } from '@mui/icons-material';
 import Layout from '../components/Layout';
+import JobTrainer from '@/components/JobTrainer';
 
 interface Course {
     id: number;
@@ -24,8 +26,15 @@ interface Article {
 }
 
 const EducationHub = () => {
+    const router = useRouter();
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState(0);
+
+    useEffect(() => {
+        if (router.query.tab === 'career' || router.query.tab === 'job-trainer') {
+            setActiveTab(3);
+        }
+    }, [router.query.tab]);
 
     const courses: Course[] = [
         {
@@ -155,6 +164,7 @@ const EducationHub = () => {
                 <Tab label="Courses" icon={<School />} iconPosition="start" />
                 <Tab label="Articles" icon={<Article />} iconPosition="start" />
                 <Tab label="Videos" icon={<PlayCircle />} iconPosition="start" />
+                <Tab label="Career Job Trainer & Upskilling" icon={<WorkOutline />} iconPosition="start" />
             </Tabs>
 
             {/* Courses Tab */}
@@ -305,6 +315,13 @@ const EducationHub = () => {
                         </Grid>
                     ))}
                 </Grid>
+            )}
+
+            {/* Career Job Trainer Tab */}
+            {activeTab === 3 && (
+                <Box sx={{ mb: 4 }}>
+                    <JobTrainer />
+                </Box>
             )}
 
             {/* Learning Stats */}

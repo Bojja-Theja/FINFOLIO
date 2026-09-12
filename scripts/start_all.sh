@@ -39,6 +39,16 @@ if [[ -f "$NEXT_LOCK" ]]; then
   rm -f "$NEXT_LOCK"
 fi
 
+# ─── Free ports if occupied by stale processes ──────────────────────────────
+for port in 3000 3001 8000; do
+  pid=$(lsof -ti :"$port" 2>/dev/null || true)
+  if [[ -n "$pid" ]]; then
+    log "Releasing occupied port $port (PID $pid)..."
+    kill "$pid" 2>/dev/null || true
+    sleep 0.5
+  fi
+done
+
 # ─── Auto-detect ML Python ────────────────────────────────────────────────────
 ML_PYTHON=""
 for candidate in \

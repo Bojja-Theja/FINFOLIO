@@ -157,7 +157,7 @@ export default function WithdrawalModal({
     }
 
     if (parsedAmount > currentBalance) {
-      setError(`Cannot withdraw $${parsedAmount.toFixed(2)}. Available liquidity is $${currentBalance.toFixed(2)}.`);
+      setError(`Cannot withdraw ₹${parsedAmount.toLocaleString('en-IN')}. Available liquidity is ₹${currentBalance.toLocaleString('en-IN')}.`);
       return;
     }
 
@@ -273,17 +273,27 @@ export default function WithdrawalModal({
             required
             type="number"
             value={amount}
-            onChange={e => setAmount(e.target.value)}
+            onChange={e => {
+              const val = parseFloat(e.target.value);
+              if (!isNaN(val) && val > 10000000) {
+                setAmount('10000000');
+              } else if (!isNaN(val) && val < 0) {
+                setAmount('0');
+              } else {
+                setAmount(e.target.value);
+              }
+            }}
             error={isInsufficient}
             helperText={
               isInsufficient
-                ? `Exceeds available balance ($${currentBalance.toFixed(2)})`
-                : `Available liquidity: $${currentBalance.toFixed(2)}`
+                ? `Exceeds available balance (₹${currentBalance.toLocaleString('en-IN')})`
+                : `Available liquidity: ₹${currentBalance.toLocaleString('en-IN')} • Max: ₹1 Cr`
             }
+            inputProps={{ min: 1, max: Math.min(10000000, currentBalance) }}
             InputProps={{
               startAdornment: (
-                <Typography variant="h6" sx={{ mr: 1, color: 'text.secondary' }}>
-                  $
+                <Typography variant="h6" sx={{ mr: 1, color: 'text.secondary', fontWeight: 700 }}>
+                  ₹
                 </Typography>
               ),
             }}
@@ -291,10 +301,10 @@ export default function WithdrawalModal({
           />
 
           <Box sx={{ display: 'flex', gap: 1, mb: 3, flexWrap: 'wrap' }}>
-            {[50, 100, 250, 500].map(val => (
+            {[500, 1000, 2500, 5000].map(val => (
               <Chip
                 key={val}
-                label={`+$${val}`}
+                label={`+₹${val.toLocaleString('en-IN')}`}
                 onClick={() => handleQuickPill(val)}
                 clickable
                 variant={parsedAmount === val ? 'filled' : 'outlined'}
@@ -418,7 +428,7 @@ export default function WithdrawalModal({
                       WALLET LIQUIDITY
                     </Typography>
                     <Typography variant="h6" sx={{ fontWeight: 800, mt: 0.5 }}>
-                      ${currentBalance.toFixed(2)} → ${remaining.toFixed(2)}
+                      ₹{currentBalance.toLocaleString('en-IN')} → ₹{remaining.toLocaleString('en-IN')}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
                       Remaining after deduction
@@ -605,9 +615,9 @@ export default function WithdrawalModal({
             {submitting
               ? 'Processing...'
               : isEmergencyMode
-              ? `Execute Emergency Withdrawal ($${parsedAmount.toFixed(2)})`
+              ? `Execute Emergency Withdrawal (₹${parsedAmount.toLocaleString('en-IN')})`
               : isOverrideSelected
-              ? `⚡ Conscious Override ($${parsedAmount.toFixed(2)})`
+              ? `⚡ Conscious Override (₹${parsedAmount.toLocaleString('en-IN')})`
               : impact?.requiresApproval
               ? 'Request Partner Review'
               : 'Confirm Instant Withdrawal'}

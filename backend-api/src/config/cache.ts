@@ -86,6 +86,10 @@ class CacheService {
     }
   }
 
+  getIsConnected(): boolean {
+    return this.isConnected;
+  }
+
   private getCacheKey(prefix: string, key: string): string {
     return `finfolio:${prefix}:${key}`;
   }

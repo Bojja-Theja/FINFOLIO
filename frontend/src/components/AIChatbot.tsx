@@ -118,12 +118,16 @@ const AIChatbot: React.FC = () => {
                     position: 'fixed',
                     bottom: 24,
                     right: 24,
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    background: 'linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%)',
+                    boxShadow: '0 8px 24px rgba(37, 99, 235, 0.4)',
                     zIndex: 1000,
+                    '&:hover': {
+                        background: 'linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%)',
+                    },
                 }}
                 onClick={() => setOpen(true)}
             >
-                <SmartToy />
+                <SmartToy sx={{ color: '#ffffff' }} />
             </Fab>
 
             {/* Chat Drawer */}
@@ -133,37 +137,41 @@ const AIChatbot: React.FC = () => {
                 onClose={() => setOpen(false)}
                 sx={{
                     '& .MuiDrawer-paper': {
-                        width: isMobile ? '100%' : 400,
+                        width: isMobile ? '100%' : 420,
                         maxWidth: '100%',
+                        bgcolor: 'background.paper',
                     },
                 }}
             >
-                <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', bgcolor: 'background.paper' }}>
                     {/* Header */}
                     <Box
                         sx={{
-                            p: 2,
-                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                            color: 'white',
+                            p: 2.5,
+                            bgcolor: theme.palette.mode === 'dark' ? '#0f172a' : '#1e293b',
+                            color: '#ffffff',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
+                            borderBottom: '1px solid',
+                            borderColor: 'divider',
                         }}
                     >
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <Avatar sx={{ mr: 2, bgcolor: 'white', color: '#667eea' }}>
-                                <SmartToy />
+                            <Avatar sx={{ mr: 1.8, bgcolor: 'primary.main', color: '#ffffff' }}>
+                                <SmartToy sx={{ fontSize: 22 }} />
                             </Avatar>
                             <Box>
-                                <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                                    AI Assistant
+                                <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#ffffff', lineHeight: 1.2 }}>
+                                    FINFOLIO AI Copilot
                                 </Typography>
-                                <Typography variant="caption" sx={{ opacity: 0.9 }}>
-                                    Online • Ready to help
+                                <Typography variant="caption" sx={{ color: '#10b981', display: 'flex', alignItems: 'center', gap: 0.6, fontWeight: 600 }}>
+                                    <Box component="span" sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#10b981' }} />
+                                    Online • Rupee (₹) Financial Advisor
                                 </Typography>
                             </Box>
                         </Box>
-                        <IconButton onClick={() => setOpen(false)} sx={{ color: 'white' }}>
+                        <IconButton onClick={() => setOpen(false)} sx={{ color: 'rgba(255, 255, 255, 0.8)', '&:hover': { color: '#ffffff' } }}>
                             <Close />
                         </IconButton>
                     </Box>
@@ -173,33 +181,45 @@ const AIChatbot: React.FC = () => {
                         sx={{
                             flexGrow: 1,
                             overflowY: 'auto',
-                            p: 2,
-                            backgroundColor: '#f9fafb',
+                            p: 2.5,
+                            bgcolor: theme.palette.mode === 'dark' ? '#080c14' : '#f8fafc',
                         }}
                     >
                         {messages.map((message) => (
-                            <Box key={message.id} sx={{ mb: 2 }}>
+                            <Box key={message.id} sx={{ mb: 2.5 }}>
                                 <Box
                                     sx={{
                                         display: 'flex',
                                         justifyContent: message.sender === 'user' ? 'flex-end' : 'flex-start',
-                                        mb: 0.5,
+                                        mb: 0.8,
                                     }}
                                 >
                                     {message.sender === 'bot' && (
-                                        <Avatar sx={{ mr: 1, width: 32, height: 32, bgcolor: '#667eea' }}>
-                                            <SmartToy sx={{ fontSize: 20 }} />
+                                        <Avatar
+                                            sx={{
+                                                mr: 1.2,
+                                                width: 32,
+                                                height: 32,
+                                                bgcolor: theme.palette.mode === 'dark' ? '#1e293b' : '#e0e7ff',
+                                                color: 'primary.main',
+                                            }}
+                                        >
+                                            <SmartToy sx={{ fontSize: 18 }} />
                                         </Avatar>
                                     )}
                                     <Box
                                         sx={{
-                                            maxWidth: '75%',
-                                            p: 1.5,
-                                            borderRadius: 2,
-                                            backgroundColor: message.sender === 'user' ? '#667eea' : 'white',
-                                            color: message.sender === 'user' ? 'white' : 'text.primary',
-                                            boxShadow: 1,
+                                            maxWidth: '82%',
+                                            p: 2,
+                                            borderRadius: message.sender === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+                                            bgcolor: message.sender === 'user' ? 'primary.main' : 'background.paper',
+                                            color: message.sender === 'user' ? '#ffffff' : 'text.primary',
+                                            border: '1px solid',
+                                            borderColor: message.sender === 'user' ? 'primary.main' : 'divider',
+                                            boxShadow: theme.palette.mode === 'dark' ? '0 2px 8px rgba(0,0,0,0.4)' : '0 2px 6px rgba(0,0,0,0.06)',
                                             whiteSpace: 'pre-line',
+                                            lineHeight: 1.6,
+                                            fontSize: '0.875rem',
                                         }}
                                     >
                                         <Typography variant="body2">{message.text}</Typography>
@@ -208,7 +228,7 @@ const AIChatbot: React.FC = () => {
 
                                 {/* Suggestions */}
                                 {message.suggestions && (
-                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1, ml: 5 }}>
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1.2, ml: 5 }}>
                                         {message.suggestions.map((suggestion, index) => (
                                             <Chip
                                                 key={index}
@@ -217,7 +237,15 @@ const AIChatbot: React.FC = () => {
                                                 onClick={() => handleSuggestionClick(suggestion)}
                                                 sx={{
                                                     cursor: 'pointer',
-                                                    '&:hover': { backgroundColor: '#e5e7eb' },
+                                                    fontWeight: 600,
+                                                    fontSize: '0.75rem',
+                                                    bgcolor: theme.palette.mode === 'dark' ? 'rgba(59, 130, 246, 0.12)' : 'rgba(37, 99, 235, 0.08)',
+                                                    color: 'primary.main',
+                                                    border: '1px solid',
+                                                    borderColor: theme.palette.mode === 'dark' ? 'rgba(59, 130, 246, 0.25)' : 'rgba(37, 99, 235, 0.2)',
+                                                    '&:hover': {
+                                                        bgcolor: theme.palette.mode === 'dark' ? 'rgba(59, 130, 246, 0.22)' : 'rgba(37, 99, 235, 0.15)',
+                                                    },
                                                 }}
                                             />
                                         ))}
@@ -229,11 +257,11 @@ const AIChatbot: React.FC = () => {
                     </Box>
 
                     {/* Input */}
-                    <Box sx={{ p: 2, backgroundColor: 'white', borderTop: '1px solid #e5e7eb' }}>
+                    <Box sx={{ p: 2, bgcolor: 'background.paper', borderTop: '1px solid', borderColor: 'divider' }}>
                         <Box sx={{ display: 'flex', gap: 1 }}>
                             <TextField
                                 fullWidth
-                                placeholder="Ask me anything about your finances..."
+                                placeholder="Ask about ₹ investments, tax regimes, debt avalanche..."
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyPress={(e) => {
@@ -251,42 +279,45 @@ const AIChatbot: React.FC = () => {
                                 onClick={() => handleSend()}
                                 disabled={!input.trim()}
                                 sx={{
-                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                    color: 'white',
+                                    bgcolor: 'primary.main',
+                                    color: '#ffffff',
                                     '&:hover': {
-                                        background: 'linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)',
+                                        bgcolor: 'primary.dark',
                                     },
                                     '&:disabled': {
-                                        background: '#e5e7eb',
-                                        color: '#9ca3af',
+                                        bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : '#e2e8f0',
+                                        color: 'text.disabled',
                                     },
                                 }}
                             >
-                                <Send />
+                                <Send fontSize="small" />
                             </IconButton>
                         </Box>
 
                         {/* Quick Actions */}
-                        <Box sx={{ display: 'flex', gap: 1, mt: 2, flexWrap: 'wrap' }}>
+                        <Box sx={{ display: 'flex', gap: 1, mt: 1.5, flexWrap: 'wrap' }}>
                             <Chip
-                                icon={<TrendingUp />}
-                                label="Budget Tips"
+                                icon={<TrendingUp fontSize="small" />}
+                                label="₹ Budget Tips"
                                 size="small"
-                                onClick={() => handleSend('Give me budget tips')}
+                                variant="outlined"
+                                onClick={() => handleSend('Give me budget tips for ₹75,000 income')}
                                 clickable
                             />
                             <Chip
-                                icon={<AccountBalance />}
-                                label="Invest"
+                                icon={<AccountBalance fontSize="small" />}
+                                label="₹ Tax Regimes"
                                 size="small"
-                                onClick={() => handleSend('How should I invest?')}
+                                variant="outlined"
+                                onClick={() => handleSend('Compare Old vs New Tax Regime for my income')}
                                 clickable
                             />
                             <Chip
-                                icon={<Lightbulb />}
-                                label="Save More"
+                                icon={<Lightbulb fontSize="small" />}
+                                label="₹ SIP Strategy"
                                 size="small"
-                                onClick={() => handleSend('How can I save more money?')}
+                                variant="outlined"
+                                onClick={() => handleSend('How should I start mutual fund SIPs in India?')}
                                 clickable
                             />
                         </Box>

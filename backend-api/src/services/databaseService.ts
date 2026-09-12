@@ -87,22 +87,6 @@ export class DatabaseService {
    * Get user financial data from database
    */
   static async getUserFinancialData(userId: number): Promise<UserFinancialData | null> {
-    // For demo user (userId 1), return mock data
-    if (userId === 1) {
-      return {
-        userId: 1,
-        monthlyIncome: 52000,
-        monthlyExpenses: 31000,
-        emergencyFund: 186000,
-        debtAmount: 50000,
-        age: 30,
-        riskTolerance: 'medium',
-        jobStability: 7,
-        marketConditions: 'neutral',
-        inflationRate: 6.0
-      };
-    }
-
     try {
         // Note: align selected columns with current DB schema (user_profiles columns)
         const result = await query(`
@@ -225,6 +209,32 @@ export class DatabaseService {
         return null;
       }
       return null;
+    }
+  }
+
+  /**
+   * Get user by ID with resilient in-memory fallback
+   */
+  static async getUserById(userId: number): Promise<{ id: number; email: string; name: string } | null> {
+    if (useInMemory) {
+      const user = inMemoryUsers.find(u => u.id === userId);
+      return user ? { id: user.id, email: user.email, name: user.name } : null;
+    }
+
+    try {
+      const result = await query(`SELECT id, email, name FROM users WHERE id = $1 LIMIT 1`, [userId]);
+      if (result.rows.length > 0) {
+        return {
+          id: result.rows[0].id,
+          email: result.rows[0].email,
+          name: result.rows[0].name
+        };
+      }
+      return null;
+    } catch (error) {
+      logger.warn(`Failed to get user by id ${userId} from database: ${error}`);
+      const user = inMemoryUsers.find(u => u.id === userId);
+      return user ? { id: user.id, email: user.email, name: user.name } : null;
     }
   }
 
@@ -855,6 +865,113 @@ export class DatabaseService {
         throw new Error(`Wallet for user ${userId} not found`);
       }
       wallet.balance = newBalance;
+      wallet.updatedAt = new Date();
+      return wallet;
+    }
+  }
+
+  /**
+   * Atomically deduct from wallet balance with non-negative check
+   */
+  static async atomicDeductWalletBalance(userId: number, amount: number): Promise<Wallet> {
+    if (amount <= 0) {
+      throw new Error(`Deduction amount must be positive: ${amount}`);
+    }
+
+    try {
+      const result = await query(
+        `UPDATE wallets
+         SET balance = balance - $1, updated_at = NOW()
+         WHERE user_id = $2 AND balance >= $1
+         RETURNING id, user_id, balance, currency, created_at, updated_at`,
+        [amount, userId]
+      );
+
+      if (result.rows.length > 0) {
+        const row = result.rows[0];
+        return {
+          id: row.id,
+          userId: row.user_id,
+          balance: parseFloat(row.balance),
+          currency: row.currency,
+          createdAt: new Date(row.created_at),
+          updatedAt: new Date(row.updated_at),
+        };
+      }
+
+      // Check if wallet exists or if balance was insufficient
+      const check = await query(`SELECT balance FROM wallets WHERE user_id = $1`, [userId]);
+      if (check.rows.length === 0) {
+        throw new Error(`Wallet for user ${userId} not found`);
+      }
+      throw new Error(
+        `Insufficient funds: current wallet balance is ${parseFloat(check.rows[0].balance)}, requested ${amount}`
+      );
+    } catch (error: any) {
+      if (error.message?.includes('Insufficient')) {
+        throw error;
+      }
+      logger.error(`Failed to atomically deduct wallet balance for user ${userId}: ${error.message}`);
+      const wallet = inMemoryWallets.find(w => w.userId === userId);
+      if (!wallet) {
+        throw new Error(`Wallet for user ${userId} not found`);
+      }
+      if (wallet.balance < amount) {
+        throw new Error(
+          `Insufficient funds: current wallet balance is ${wallet.balance}, requested ${amount}`
+        );
+      }
+      wallet.balance = Math.round((wallet.balance - amount) * 100) / 100;
+      wallet.updatedAt = new Date();
+      return wallet;
+    }
+  }
+
+  /**
+   * Atomically add to wallet balance
+   */
+  static async atomicAddWalletBalance(userId: number, amount: number): Promise<Wallet> {
+    if (amount <= 0) {
+      throw new Error(`Deposit amount must be positive: ${amount}`);
+    }
+
+    try {
+      const result = await query(
+        `INSERT INTO wallets (user_id, balance, currency, created_at, updated_at)
+         VALUES ($2, $1, 'INR', NOW(), NOW())
+         ON CONFLICT (user_id)
+         DO UPDATE SET balance = wallets.balance + $1, updated_at = NOW()
+         RETURNING id, user_id, balance, currency, created_at, updated_at`,
+        [amount, userId]
+      );
+
+      if (result.rows.length > 0) {
+        const row = result.rows[0];
+        return {
+          id: row.id,
+          userId: row.user_id,
+          balance: parseFloat(row.balance),
+          currency: row.currency,
+          createdAt: new Date(row.created_at),
+          updatedAt: new Date(row.updated_at),
+        };
+      }
+      throw new Error(`Wallet for user ${userId} not found`);
+    } catch (error: any) {
+      logger.error(`Failed to atomically add wallet balance for user ${userId}: ${error.message}`);
+      let wallet = inMemoryWallets.find(w => w.userId === userId);
+      if (!wallet) {
+        wallet = {
+          id: nextWalletId++,
+          userId,
+          balance: 0,
+          currency: 'INR',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+        inMemoryWallets.push(wallet);
+      }
+      wallet.balance = Math.round((wallet.balance + amount) * 100) / 100;
       wallet.updatedAt = new Date();
       return wallet;
     }
@@ -1520,18 +1637,76 @@ export class DatabaseService {
   }
 
   /**
+   * Atomically transition an approved withdrawal request to executed state
+   * Prevents race conditions and duplicate executions.
+   */
+  static async atomicTransitionApprovedToExecuted(
+    requestId: number,
+    userId: number
+  ): Promise<WithdrawalRequest | null> {
+    try {
+      const result = await query(
+        `UPDATE withdrawal_requests
+         SET status = 'executed', updated_at = NOW()
+         WHERE id = $1 AND user_id = $2 AND status = 'approved'
+         RETURNING *`,
+        [requestId, userId]
+      );
+
+      if (result.rows.length === 0) {
+        return null;
+      }
+
+      const row = result.rows[0];
+      return {
+        id: row.id,
+        userId: row.user_id,
+        walletId: row.wallet_id,
+        goalId: row.goal_id || undefined,
+        amount: parseFloat(row.amount),
+        category: row.category,
+        reason: row.reason,
+        status: row.status,
+        estimatedDelayDays: row.estimated_delay_days,
+        runwayImpactMonths: parseFloat(row.runway_impact_months),
+        isEmergency: row.is_emergency,
+        isOverride: row.is_override,
+        partnerNotes: row.partner_notes || undefined,
+        decisionDate: row.decision_date ? new Date(row.decision_date) : undefined,
+        createdAt: new Date(row.created_at),
+        updatedAt: new Date(row.updated_at),
+      };
+    } catch (error) {
+      logger.error(
+        `Failed to atomically transition withdrawal request ${requestId} to executed: ${error}`
+      );
+      const req = inMemoryWithdrawals.find(
+        w => w.id === requestId && w.userId === userId && w.status === 'approved'
+      );
+      if (req) {
+        req.status = 'executed';
+        req.updatedAt = new Date();
+        return req;
+      }
+      return null;
+    }
+  }
+
+  /**
    * Get pending withdrawal requests for a partner email
+   * Strictly isolates to active partner assignments and pending status.
    */
   static async getPendingRequestsForPartnerEmail(partnerEmail: string): Promise<WithdrawalRequest[]> {
+    const trimmedEmail = partnerEmail.trim().toLowerCase();
     try {
       const result = await query(
         `SELECT wr.*
          FROM withdrawal_requests wr
-         JOIN commitment_rules cr ON wr.user_id = cr.user_id AND wr.category = cr.category
+         JOIN commitment_rules cr ON wr.user_id = cr.user_id AND LOWER(TRIM(wr.category)) = LOWER(TRIM(cr.category))
          JOIN accountability_partners ap ON cr.partner_id = ap.id
-         WHERE LOWER(ap.email) = LOWER($1) AND ap.status = 'active'
+         WHERE LOWER(TRIM(ap.email)) = LOWER($1) AND ap.status = 'active' AND wr.status = 'pending'
          ORDER BY wr.created_at DESC`,
-        [partnerEmail]
+        [trimmedEmail]
       );
 
       return result.rows.map((row: any) => ({
@@ -1554,13 +1729,25 @@ export class DatabaseService {
       }));
     } catch (error) {
       logger.error(`Failed to get pending requests for partner email ${partnerEmail}: ${error}`);
-      // In-memory fallback
-      const activePartnerUserIds = inMemoryPartners
-        .filter(p => p.email.toLowerCase() === partnerEmail.toLowerCase() && p.status === 'active')
-        .map(p => p.userId);
+      // In-memory fallback with strict category, partner ID, and pending status matching
+      const activePartners = inMemoryPartners.filter(
+        p => p.email.trim().toLowerCase() === trimmedEmail && p.status === 'active'
+      );
+      const activePartnerIds = new Set(activePartners.map(p => p.id));
+
+      const matchingRules = inMemoryRules.filter(
+        r => r.partnerId !== undefined && r.partnerId !== null && activePartnerIds.has(r.partnerId)
+      );
 
       return inMemoryWithdrawals
-        .filter(w => activePartnerUserIds.includes(w.userId))
+        .filter(w => {
+          if (w.status !== 'pending') return false;
+          return matchingRules.some(
+            r =>
+              r.userId === w.userId &&
+              r.category.trim().toLowerCase() === w.category.trim().toLowerCase()
+          );
+        })
         .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
     }
   }

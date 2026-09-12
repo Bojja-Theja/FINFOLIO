@@ -182,6 +182,46 @@ export class WithdrawalService {
       },
     });
 
+    // Notify assigned partner or active accountability partners about pending review
+    try {
+      let partnerToNotify: { id?: number; email: string } | null = null;
+      if (impact.assignedPartnerId) {
+        const p = await DatabaseService.getAccountabilityPartnerById(impact.assignedPartnerId);
+        if (p && p.status === 'active') {
+          partnerToNotify = p;
+        }
+      }
+      if (!partnerToNotify) {
+        const partners = await DatabaseService.getAccountabilityPartners(userId);
+        const activePartner = partners.find(p => p.status === 'active');
+        if (activePartner) {
+          partnerToNotify = activePartner;
+        }
+      }
+
+      if (partnerToNotify) {
+        await DatabaseService.createPartnerNotification({
+          userId,
+          partnerId: partnerToNotify.id,
+          partnerEmail: partnerToNotify.email,
+          type: 'withdrawal_review_required',
+          title: '⚠️ Discretionary Withdrawal Review Required',
+          message: `User #${userId} requested a withdrawal of ₹${parsedAmount.toFixed(2)} (${category}). Reason: "${trimmedReason}". Requires your review.`,
+          details: {
+            requestId: request.id,
+            amount: parsedAmount,
+            category,
+            reason: trimmedReason,
+            delayDays: impact.estimatedDelayDays,
+            runwayImpactMonths: impact.runwayImpactMonths,
+            createdAt: new Date(),
+          },
+        });
+      }
+    } catch (notifyErr) {
+      logger.warn(`Failed to dispatch partner review notification: ${notifyErr}`);
+    }
+
     logger.info(
       `Discretionary withdrawal request #${request.id} created in 'pending' status for user ${userId}: $${parsedAmount}`
     );
@@ -340,70 +380,60 @@ export class WithdrawalService {
     userId: number,
     requestId: number
   ): Promise<{ request: WithdrawalRequest; transaction: WalletTransaction }> {
-    const request = await DatabaseService.getWithdrawalRequestById(requestId);
-    if (!request || request.userId !== userId) {
-      throw new Error('Withdrawal request not found.');
-    }
-
-    if (request.status === 'executed') {
-      throw new Error('This withdrawal request has already been executed.');
-    }
-
-    if (request.status === 'declined') {
-      throw new Error('Cannot execute a declined withdrawal request.');
-    }
-
-    if (request.status === 'cancelled') {
-      throw new Error('Cannot execute a cancelled withdrawal request.');
-    }
-
-    if (request.status !== 'approved') {
-      throw new Error(
-        `Withdrawal request is currently '${request.status}' and requires partner approval before execution.`
-      );
-    }
-
-    // Check balance invariant
-    const wallet = await WalletService.getWallet(userId);
-    if (wallet.balance < request.amount) {
-      throw new Error(
-        `Insufficient wallet balance ($${wallet.balance.toFixed(2)}) to execute approved withdrawal ($${request.amount.toFixed(2)}).`
-      );
-    }
-
-    // Atomically execute withdrawal
-    const { transaction } = await WalletService.withdraw(
-      userId,
-      request.amount,
-      request.category,
-      request.reason,
-      `req-${request.id}`
-    );
-
-    // Update request to executed
-    const updated = await DatabaseService.updateWithdrawalRequestStatus(
+    // 1. Atomically transition from 'approved' to 'executed' to eliminate race conditions
+    const executedRequest = await DatabaseService.atomicTransitionApprovedToExecuted(
       requestId,
-      'executed',
-      request.partnerNotes ?? undefined,
-      new Date()
+      userId
     );
 
-    if (!updated) {
-      throw new Error('Failed to update withdrawal request status.');
+    if (!executedRequest) {
+      const existing = await DatabaseService.getWithdrawalRequestById(requestId);
+      if (!existing || existing.userId !== userId) {
+        throw new Error('Withdrawal request not found.');
+      }
+      if (existing.status === 'executed') {
+        throw new Error('This withdrawal request has already been executed.');
+      }
+      if (existing.status === 'declined') {
+        throw new Error('Cannot execute a declined withdrawal request.');
+      }
+      if (existing.status === 'cancelled') {
+        throw new Error('Cannot execute a cancelled withdrawal request.');
+      }
+      throw new Error(
+        `Withdrawal request is currently '${existing.status}' and requires partner approval before execution.`
+      );
     }
 
-    // Update linked goal if present
-    if (request.goalId) {
+    // 2. Perform atomic balance deduction
+    let transaction: WalletTransaction;
+    try {
+      const result = await WalletService.withdraw(
+        userId,
+        executedRequest.amount,
+        executedRequest.category,
+        executedRequest.reason,
+        `req-${executedRequest.id}`
+      );
+      transaction = result.transaction;
+    } catch (deductErr) {
+      // Revert request status back to 'approved' if balance deduction failed
+      await DatabaseService.updateWithdrawalRequestStatus(requestId, 'approved');
+      throw deductErr;
+    }
+
+    // 3. Update linked goal if present
+    if (executedRequest.goalId) {
       try {
-        const goal = await FinancialGoalService.getGoalById(userId, request.goalId);
+        const goal = await FinancialGoalService.getGoalById(userId, executedRequest.goalId);
         if (goal) {
-          const newCurrent = Math.max(0, goal.currentAmount - request.amount);
-          await FinancialGoalService.updateGoal(userId, request.goalId, {
+          const newCurrent = Math.max(0, goal.currentAmount - executedRequest.amount);
+          await FinancialGoalService.updateGoal(userId, executedRequest.goalId, {
             currentAmount: newCurrent,
           });
         }
       } catch (e) {
-        logger.warn(`Could not update linked goal ${request.goalId}: ${e}`);
+        logger.warn(`Could not update linked goal ${executedRequest.goalId}: ${e}`);
       }
     }
 
@@ -414,16 +444,16 @@ export class WithdrawalService {
       status: 'success',
       details: {
         requestId,
-        amount: request.amount,
+        amount: executedRequest.amount,
         transactionId: transaction.id,
       },
     });
 
     logger.info(
-      `Approved withdrawal request #${requestId} executed for user ${userId}: $${request.amount}`
+      `Approved withdrawal request #${requestId} executed for user ${userId}: $${executedRequest.amount}`
     );
 
-    return { request: updated, transaction };
+    return { request: executedRequest, transaction };
   }
 
   /**

@@ -363,7 +363,7 @@ const SalaryInsights: React.FC<SalaryInsightsProps> = ({ initialExperience = 5 }
                                         border: 'none',
                                         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
                                     }}
-                                    formatter={(value: any) => [value ? `$${value.toLocaleString()}` : '$0', 'Salary']}
+                                    formatter={(value: any) => [value ? `₹${Number(value).toLocaleString('en-IN')}` : '₹0', 'Salary']}
                                     labelFormatter={(label) => `${label} Years Experience`}
                                 />
                                 <Area

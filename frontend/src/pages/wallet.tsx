@@ -26,6 +26,12 @@ import {
   TableHead,
   TableRow,
   Paper,
+  alpha,
+  LinearProgress,
+  InputAdornment,
+  FormControl,
+  Select,
+  InputLabel,
 } from '@mui/material';
 import {
   AccountBalanceWallet,
@@ -34,7 +40,16 @@ import {
   Refresh,
   CheckCircle,
   AccountBalance,
+  HourglassEmpty,
+  PlayArrow,
+  Cancel as CancelIcon,
+  Shield,
+  FileDownload,
+  Search,
+  Savings,
+  Lock,
 } from '@mui/icons-material';
+import { useCurrency } from '@/context/CurrencyContext';
 import {
   walletService,
   Wallet,
@@ -46,7 +61,6 @@ import {
   WithdrawalResponse,
 } from '../services/withdrawalService';
 import WithdrawalModal from '../components/WithdrawalModal';
-import { HourglassEmpty, PlayArrow, Cancel as CancelIcon, Shield } from '@mui/icons-material';
 
 const GridTyped = Grid as any;
 
@@ -70,6 +84,7 @@ const withdrawalCategories = [
 ];
 
 const WalletPage = () => {
+  const { currency, currencyInfo, formatAmount } = useCurrency();
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
   const [withdrawalRequests, setWithdrawalRequests] = useState<WithdrawalRequest[]>([]);
@@ -79,6 +94,11 @@ const WalletPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [patternAdvisory, setPatternAdvisory] = useState<string | null>(null);
+
+  // Search & Filter state for ledger
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [filterType, setFilterType] = useState<'all' | 'deposit' | 'withdrawal'>('all');
+  const [filterCategory, setFilterCategory] = useState<string>('all');
 
   // Deposit modal
   const [openDeposit, setOpenDeposit] = useState<boolean>(false);
@@ -136,7 +156,7 @@ const WalletPage = () => {
     setError(null);
     try {
       const res = await walletService.deposit(amountNum, depositCategory, depositReason);
-      setSuccessMsg(res.message || `Successfully deposited $${amountNum.toLocaleString()}`);
+      setSuccessMsg(res.message || `Successfully deposited ₹${amountNum.toLocaleString('en-IN')}`);
       setOpenDeposit(false);
       fetchWalletData();
     } catch (err: any) {
@@ -174,15 +194,56 @@ const WalletPage = () => {
   const currentBalance = wallet ? wallet.balance : 0;
   const netSavings = Math.round((totalDeposited - totalWithdrawn) * 100) / 100;
 
+  // Virtual Sub-Vault Allocation Breakdown
+  const subVaults = [
+    { name: 'Emergency Buffer', ratio: 0.40, color: '#0ea5e9', icon: <Shield sx={{ fontSize: 18 }} />, desc: 'Liquid contingency for unexpected life events' },
+    { name: 'Taxes & Essential Bills', ratio: 0.30, color: '#f59e0b', icon: <AccountBalance sx={{ fontSize: 18 }} />, desc: 'Fixed commitments, rent, utility & tax reserve' },
+    { name: 'Milestone Goals Stash', ratio: 0.20, color: '#10b981', icon: <Savings sx={{ fontSize: 18 }} />, desc: 'Earmarked capital for high-priority targets' },
+    { name: 'Discretionary Cash', ratio: 0.10, color: '#a855f7', icon: <Lock sx={{ fontSize: 18 }} />, desc: 'Guilt-free personal flexibility spend' },
+  ];
+
+  const handleExportCSV = () => {
+    if (transactions.length === 0) return;
+    const headers = ['Transaction ID', 'Date', 'Type', 'Category', 'Reason/Notes', 'Amount', 'Currency', 'Status'];
+    const rows = transactions.map(t => [
+      t.id,
+      `"${new Date(t.createdAt).toISOString()}"`,
+      t.type,
+      `"${t.category}"`,
+      `"${(t.reason || '').replace(/"/g, '""')}"`,
+      t.amount,
+      currency,
+      t.status,
+    ]);
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `finfolio_ledger_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const filteredTransactions = transactions.filter((tx) => {
+    const matchesType = filterType === 'all' || tx.type === filterType;
+    const matchesCategory = filterCategory === 'all' || tx.category === filterCategory;
+    const matchesSearch = !searchQuery || 
+      (tx.reason && tx.reason.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      tx.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tx.amount.toString().includes(searchQuery);
+    return matchesType && matchesCategory && matchesSearch;
+  });
+
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
       {/* Page Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: 800, color: '#1e293b' }}>
+          <Typography variant="h4" sx={{ fontWeight: 800, color: 'text.primary', letterSpacing: '-0.02em' }}>
             💳 Simulated Savings Wallet
           </Typography>
-          <Typography variant="body2" color="textSecondary" sx={{ mt: 0.5 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
             Manage cash reserves, record deposits, and track intentional withdrawals with an auditable transaction ledger.
           </Typography>
         </Box>
@@ -191,6 +252,7 @@ const WalletPage = () => {
           startIcon={<Refresh />}
           onClick={() => fetchWalletData()}
           disabled={loading}
+          sx={{ borderRadius: 2 }}
         >
           Refresh
         </Button>
@@ -278,10 +340,10 @@ const WalletPage = () => {
               Available Liquidity
             </Typography>
             <Typography variant="h2" sx={{ fontWeight: 900, color: '#f8fafc', my: 1 }}>
-              ${currentBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              {formatAmount(currentBalance)}
             </Typography>
             <Typography variant="caption" sx={{ color: '#cbd5e1' }}>
-              Currency: <span style={{ fontWeight: 700 }}>{wallet?.currency || 'USD'}</span> • Non-negative constraint enforced
+              Currency: <span style={{ fontWeight: 700 }}>{currency}</span> • Non-negative constraint enforced
             </Typography>
 
             <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
@@ -324,12 +386,12 @@ const WalletPage = () => {
         <GridTyped item xs={12} md={5}>
           <GridTyped container spacing={2}>
             <GridTyped item xs={6}>
-              <Card sx={{ borderRadius: 3, border: '1px solid #e2e8f0', p: 2 }}>
+              <Card sx={{ borderRadius: 3, border: (theme) => `1px solid ${theme.palette.divider}`, p: 2, bgcolor: 'background.paper' }}>
                 <Typography variant="caption" color="textSecondary" sx={{ fontWeight: 600 }}>
                   TOTAL DEPOSITED
                 </Typography>
                 <Typography variant="h5" sx={{ fontWeight: 800, color: '#10b981', mt: 0.5 }}>
-                  +${totalDeposited.toLocaleString()}
+                  +{formatAmount(totalDeposited)}
                 </Typography>
                 <Typography variant="caption" color="textSecondary">
                   Cumulative savings added
@@ -337,12 +399,12 @@ const WalletPage = () => {
               </Card>
             </GridTyped>
             <GridTyped item xs={6}>
-              <Card sx={{ borderRadius: 3, border: '1px solid #e2e8f0', p: 2 }}>
+              <Card sx={{ borderRadius: 3, border: (theme) => `1px solid ${theme.palette.divider}`, p: 2, bgcolor: 'background.paper' }}>
                 <Typography variant="caption" color="textSecondary" sx={{ fontWeight: 600 }}>
                   TOTAL WITHDRAWN
                 </Typography>
                 <Typography variant="h5" sx={{ fontWeight: 800, color: '#ef4444', mt: 0.5 }}>
-                  -${totalWithdrawn.toLocaleString()}
+                  -{formatAmount(totalWithdrawn)}
                 </Typography>
                 <Typography variant="caption" color="textSecondary">
                   Discretionary spending
@@ -350,12 +412,12 @@ const WalletPage = () => {
               </Card>
             </GridTyped>
             <GridTyped item xs={6}>
-              <Card sx={{ borderRadius: 3, border: '1px solid #e2e8f0', p: 2 }}>
+              <Card sx={{ borderRadius: 3, border: (theme) => `1px solid ${theme.palette.divider}`, p: 2, bgcolor: 'background.paper' }}>
                 <Typography variant="caption" color="textSecondary" sx={{ fontWeight: 600 }}>
                   NET RETAINED
                 </Typography>
                 <Typography variant="h5" sx={{ fontWeight: 800, color: '#3b82f6', mt: 0.5 }}>
-                  ${netSavings.toLocaleString()}
+                  {formatAmount(netSavings)}
                 </Typography>
                 <Typography variant="caption" color="textSecondary">
                   Total deposits minus outflows
@@ -363,7 +425,7 @@ const WalletPage = () => {
               </Card>
             </GridTyped>
             <GridTyped item xs={6}>
-              <Card sx={{ borderRadius: 3, border: '1px solid #e2e8f0', p: 2 }}>
+              <Card sx={{ borderRadius: 3, border: (theme) => `1px solid ${theme.palette.divider}`, p: 2, bgcolor: 'background.paper' }}>
                 <Typography variant="caption" color="textSecondary" sx={{ fontWeight: 600 }}>
                   TOTAL TRANSACTIONS
                 </Typography>
@@ -379,17 +441,171 @@ const WalletPage = () => {
         </GridTyped>
       </GridTyped>
 
-      {/* Transaction Ledger Table */}
-      <Card sx={{ borderRadius: 3, border: '1px solid #e2e8f0', mb: 4 }}>
+      {/* Virtual Sub-Vault Allocations Card */}
+      <Card sx={{ borderRadius: 3, border: (theme) => `1px solid ${theme.palette.divider}`, mb: 4, bgcolor: 'background.paper' }}>
         <CardContent sx={{ p: 3 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5, flexWrap: 'wrap', gap: 1 }}>
             <Box>
-              <Typography variant="h6" sx={{ fontWeight: 800, color: '#1e293b' }}>
+              <Typography variant="h6" sx={{ fontWeight: 800, color: 'text.primary', display: 'flex', alignItems: 'center', gap: 1 }}>
+                <AccountBalanceWallet color="primary" />
+                Virtual Sub-Vault Allocations
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Rule-based mental accounting partitions your liquid vault into protected purpose-specific reserves.
+              </Typography>
+            </Box>
+            <Chip
+              label="Auto-Partitioned"
+              size="small"
+              color="primary"
+              variant="outlined"
+              sx={{ fontWeight: 700 }}
+            />
+          </Box>
+
+          <GridTyped container spacing={2}>
+            {subVaults.map((vault) => {
+              const allocatedAmount = currentBalance * vault.ratio;
+              return (
+                <GridTyped item xs={12} sm={6} md={3} key={vault.name}>
+                  <Box
+                    sx={{
+                      p: 2,
+                      borderRadius: 2.5,
+                      border: '1px solid',
+                      borderColor: (theme) => alpha(theme.palette.divider, 0.8),
+                      bgcolor: (theme) => alpha(theme.palette.background.default, 0.5),
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <Box>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: vault.color }}>
+                          {vault.icon}
+                          <Typography variant="subtitle2" fontWeight={800} color="text.primary">
+                            {vault.name}
+                          </Typography>
+                        </Box>
+                        <Chip
+                          label={`${Math.round(vault.ratio * 100)}%`}
+                          size="small"
+                          sx={{
+                            fontWeight: 800,
+                            fontSize: '0.7rem',
+                            bgcolor: alpha(vault.color, 0.12),
+                            color: vault.color,
+                          }}
+                        />
+                      </Box>
+                      <Typography variant="h5" fontWeight={900} color="text.primary" sx={{ my: 0.5 }}>
+                        {formatAmount(allocatedAmount)}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.5, minHeight: 32 }}>
+                        {vault.desc}
+                      </Typography>
+                    </Box>
+                    <LinearProgress
+                      variant="determinate"
+                      value={vault.ratio * 100}
+                      sx={{
+                        height: 6,
+                        borderRadius: 3,
+                        bgcolor: (theme) => alpha(theme.palette.divider, 0.4),
+                        '& .MuiLinearProgress-bar': {
+                          bgcolor: vault.color,
+                          borderRadius: 3,
+                        }
+                      }}
+                    />
+                  </Box>
+                </GridTyped>
+              );
+            })}
+          </GridTyped>
+        </CardContent>
+      </Card>
+
+      {/* Transaction Ledger Table */}
+      <Card sx={{ borderRadius: 3, border: (theme) => `1px solid ${theme.palette.divider}`, mb: 4, bgcolor: 'background.paper' }}>
+        <CardContent sx={{ p: 3 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 2 }}>
+            <Box>
+              <Typography variant="h6" sx={{ fontWeight: 800, color: 'text.primary' }}>
                 📜 Auditable Transaction Ledger
               </Typography>
-              <Typography variant="body2" color="textSecondary">
-                Immutable records of every simulated balance modification.
+              <Typography variant="body2" color="text.secondary">
+                Immutable records of every simulated balance modification with multi-field search and CSV export.
               </Typography>
+            </Box>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<FileDownload />}
+              onClick={handleExportCSV}
+              disabled={transactions.length === 0}
+              sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 700 }}
+            >
+              Export CSV Ledger
+            </Button>
+          </Box>
+
+          {/* Search and Filters Toolbar */}
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 1.5, mb: 2.5, alignItems: { md: 'center' } }}>
+            <TextField
+              size="small"
+              placeholder="Search by notes, reason, category, or amount..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search sx={{ fontSize: 18, color: 'text.secondary' }} />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ flexGrow: 1 }}
+            />
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
+              <Chip
+                label="All"
+                size="small"
+                onClick={() => setFilterType('all')}
+                color={filterType === 'all' ? 'primary' : 'default'}
+                sx={{ fontWeight: 700 }}
+              />
+              <Chip
+                label="Deposits"
+                size="small"
+                onClick={() => setFilterType('deposit')}
+                color={filterType === 'deposit' ? 'success' : 'default'}
+                sx={{ fontWeight: 700 }}
+              />
+              <Chip
+                label="Withdrawals"
+                size="small"
+                onClick={() => setFilterType('withdrawal')}
+                color={filterType === 'withdrawal' ? 'error' : 'default'}
+                sx={{ fontWeight: 700 }}
+              />
+              <FormControl size="small" sx={{ minWidth: 160 }}>
+                <InputLabel id="category-filter-label">Category</InputLabel>
+                <Select
+                  labelId="category-filter-label"
+                  label="Category"
+                  value={filterCategory}
+                  onChange={(e) => setFilterCategory(e.target.value)}
+                >
+                  <MenuItem value="all">All Categories</MenuItem>
+                  {Array.from(new Set(transactions.map((t) => t.category))).map((cat) => (
+                    <MenuItem key={cat} value={cat}>
+                      {cat.replace(/_/g, ' ')}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Box>
           </Box>
 
@@ -397,34 +613,40 @@ const WalletPage = () => {
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
               <CircularProgress />
             </Box>
-          ) : transactions.length === 0 ? (
+          ) : filteredTransactions.length === 0 ? (
             <Box sx={{ textAlign: 'center', py: 6 }}>
-              <AccountBalanceWallet sx={{ fontSize: 48, color: '#cbd5e1', mb: 1 }} />
-              <Typography variant="subtitle1" color="textSecondary" sx={{ fontWeight: 600 }}>
-                No wallet transactions recorded yet
+              <AccountBalanceWallet sx={{ fontSize: 48, color: 'text.secondary', opacity: 0.4, mb: 1 }} />
+              <Typography variant="subtitle1" color="text.secondary" sx={{ fontWeight: 600 }}>
+                {transactions.length === 0 ? 'No wallet transactions recorded yet' : 'No transactions match the selected filters'}
               </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-                Deposit your first funds into your simulated wallet to begin.
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                {transactions.length === 0 ? 'Deposit your first funds into your simulated wallet to begin.' : 'Try adjusting your search keywords or clear the category filters.'}
               </Typography>
-              <Button variant="contained" onClick={() => setOpenDeposit(true)}>
-                Make First Deposit
-              </Button>
+              {transactions.length === 0 ? (
+                <Button variant="contained" onClick={() => setOpenDeposit(true)} sx={{ borderRadius: 2 }}>
+                  Make First Deposit
+                </Button>
+              ) : (
+                <Button variant="outlined" size="small" onClick={() => { setSearchQuery(''); setFilterType('all'); setFilterCategory('all'); }} sx={{ borderRadius: 2 }}>
+                  Clear Filters
+                </Button>
+              )}
             </Box>
           ) : (
-            <TableContainer component={Paper} elevation={0}>
+            <TableContainer component={Paper} elevation={0} sx={{ border: (theme) => `1px solid ${theme.palette.divider}`, borderRadius: 2 }}>
               <Table>
-                <TableHead sx={{ backgroundColor: '#f8fafc' }}>
+                <TableHead sx={{ backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.03) }}>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 700, color: '#475569' }}>Type</TableCell>
-                    <TableCell sx={{ fontWeight: 700, color: '#475569' }}>Date &amp; Time</TableCell>
-                    <TableCell sx={{ fontWeight: 700, color: '#475569' }}>Category</TableCell>
-                    <TableCell sx={{ fontWeight: 700, color: '#475569' }}>Reason / Notes</TableCell>
-                    <TableCell sx={{ fontWeight: 700, color: '#475569' }} align="right">Amount</TableCell>
-                    <TableCell sx={{ fontWeight: 700, color: '#475569' }} align="center">Status</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Type</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Date &amp; Time</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Category</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Reason / Notes</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }} align="right">Amount</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }} align="center">Status</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {transactions.map((tx) => {
+                  {filteredTransactions.map((tx) => {
                     const isDeposit = tx.type === 'deposit';
                     return (
                       <TableRow key={tx.id} hover>
@@ -448,13 +670,13 @@ const WalletPage = () => {
                             />
                           )}
                         </TableCell>
-                        <TableCell sx={{ color: '#475569', fontSize: '0.875rem' }}>
+                        <TableCell sx={{ color: 'text.secondary', fontSize: '0.875rem' }}>
                           {new Date(tx.createdAt).toLocaleString()}
                         </TableCell>
-                        <TableCell sx={{ fontWeight: 600, color: '#334155' }}>
+                        <TableCell sx={{ fontWeight: 600 }}>
                           {tx.category.replace(/_/g, ' ')}
                         </TableCell>
-                        <TableCell sx={{ color: '#64748b' }}>
+                        <TableCell sx={{ color: 'text.secondary' }}>
                           {tx.reason || '—'}
                         </TableCell>
                         <TableCell
@@ -465,7 +687,7 @@ const WalletPage = () => {
                             color: isDeposit ? '#10b981' : '#ef4444',
                           }}
                         >
-                          {isDeposit ? '+' : '-'}${tx.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                          {isDeposit ? '+' : '-'}{formatAmount(tx.amount)}
                         </TableCell>
                         <TableCell align="center">
                           <Chip
@@ -487,15 +709,15 @@ const WalletPage = () => {
       </Card>
 
       {/* Accountability Withdrawal Requests */}
-      <Card sx={{ borderRadius: 4, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', mt: 4 }}>
+      <Card sx={{ borderRadius: 3, border: (theme) => `1px solid ${theme.palette.divider}`, mt: 4 }}>
         <CardContent sx={{ p: 3 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
             <Box>
-              <Typography variant="h6" sx={{ fontWeight: 800, color: '#1e293b', display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="h6" sx={{ fontWeight: 800, color: 'text.primary', display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Shield color="primary" />
                 Accountability Requests & Impact Log
               </Typography>
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant="body2" color="text.secondary">
                 Pending mentor reviews, consequence forecasts, and approved withdrawals awaiting execution.
               </Typography>
             </Box>
@@ -509,23 +731,23 @@ const WalletPage = () => {
 
           {withdrawalRequests.length === 0 ? (
             <Box sx={{ py: 4, textAlign: 'center' }}>
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant="body2" color="text.secondary">
                 No withdrawal requests on record. All your transactions are tracked in the ledger above.
               </Typography>
             </Box>
           ) : (
-            <TableContainer component={Paper} elevation={0} sx={{ border: '1px solid #e2e8f0', borderRadius: 2 }}>
+            <TableContainer component={Paper} elevation={0} sx={{ border: (theme) => `1px solid ${theme.palette.divider}`, borderRadius: 2 }}>
               <Table>
-                <TableHead sx={{ backgroundColor: '#f8fafc' }}>
+                <TableHead sx={{ backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.03) }}>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 700, color: '#475569' }}>ID</TableCell>
-                    <TableCell sx={{ fontWeight: 700, color: '#475569' }}>Category</TableCell>
-                    <TableCell sx={{ fontWeight: 700, color: '#475569' }}>Reason</TableCell>
-                    <TableCell sx={{ fontWeight: 700, color: '#475569' }} align="right">Amount</TableCell>
-                    <TableCell sx={{ fontWeight: 700, color: '#475569' }} align="center">Goal Delay</TableCell>
-                    <TableCell sx={{ fontWeight: 700, color: '#475569' }} align="center">Runway Impact</TableCell>
-                    <TableCell sx={{ fontWeight: 700, color: '#475569' }} align="center">Status</TableCell>
-                    <TableCell sx={{ fontWeight: 700, color: '#475569' }} align="right">Actions</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>ID</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Category</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Reason</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }} align="right">Amount</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }} align="center">Goal Delay</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }} align="center">Runway Impact</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }} align="center">Status</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }} align="right">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -545,7 +767,7 @@ const WalletPage = () => {
                       <TableCell sx={{ fontWeight: 600 }}>{req.category.replace(/_/g, ' ')}</TableCell>
                       <TableCell sx={{ color: '#64748b', maxWidth: 200 }}>{req.reason}</TableCell>
                       <TableCell align="right" sx={{ fontWeight: 800, color: '#ef4444' }}>
-                        ${req.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        {formatAmount(req.amount)}
                       </TableCell>
                       <TableCell align="center">
                         <Chip
@@ -634,15 +856,15 @@ const WalletPage = () => {
             </Typography>
 
             {/* Quick Amount Buttons */}
-            <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-              {[100, 500, 1000, 2500].map((amt) => (
+            <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
+              {[1000, 5000, 10000, 25000].map((amt) => (
                 <Button
                   key={amt}
                   variant={depositAmount === amt.toString() ? 'contained' : 'outlined'}
                   size="small"
                   onClick={() => setDepositAmount(amt.toString())}
                 >
-                  +${amt}
+                  +₹{amt.toLocaleString('en-IN')}
                 </Button>
               ))}
             </Box>
@@ -651,10 +873,23 @@ const WalletPage = () => {
               fullWidth
               required
               type="number"
-              label="Deposit Amount ($)"
+              label="Deposit Amount (₹)"
               value={depositAmount}
-              onChange={(e) => setDepositAmount(e.target.value)}
-              inputProps={{ min: 1, step: 'any' }}
+              helperText="Min: ₹1 • Max: ₹1 Cr per deposit"
+              inputProps={{ min: 1, max: 10000000 }}
+              InputProps={{
+                startAdornment: <Typography sx={{ mr: 1, fontWeight: 700, color: 'success.main' }}>₹</Typography>,
+              }}
+              onChange={(e) => {
+                const val = parseFloat(e.target.value);
+                if (!isNaN(val) && val > 10000000) {
+                  setDepositAmount('10000000');
+                } else if (!isNaN(val) && val < 0) {
+                  setDepositAmount('0');
+                } else {
+                  setDepositAmount(e.target.value);
+                }
+              }}
               sx={{ mb: 2 }}
             />
 
@@ -684,7 +919,7 @@ const WalletPage = () => {
                 PROJECTED BALANCE
               </Typography>
               <Typography variant="h6" sx={{ fontWeight: 800, color: '#15803d' }}>
-                ${(currentBalance + (parseFloat(depositAmount) || 0)).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                ₹{(currentBalance + (parseFloat(depositAmount) || 0)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
               </Typography>
             </Box>
           </DialogContent>
