@@ -61,10 +61,10 @@ export default function Home() {
   const theme = useTheme();
   const { currency, currencyInfo, setCurrency, formatAmount } = useCurrency();
 
-  // Interactive Hero Runway Calculator state
-  const [calcIncome, setCalcIncome] = useState(5500);
-  const [calcExpenses, setCalcExpenses] = useState(3200);
-  const [calcSavings, setCalcSavings] = useState(12000);
+  // Interactive Hero Runway Calculator state (Indian Rupee native)
+  const [calcIncome, setCalcIncome] = useState(85000);
+  const [calcExpenses, setCalcExpenses] = useState(42000);
+  const [calcSavings, setCalcSavings] = useState(250000);
 
   const calculatedRunway = calcExpenses > 0 ? (calcSavings / calcExpenses).toFixed(1) : '0';
   const runwayNumber = Number(calculatedRunway);
@@ -166,20 +166,40 @@ export default function Home() {
                     variant="contained"
                     size="large"
                     component={Link}
-                    href="/dashboard"
+                    href="/assessment"
+                    startIcon={<Bolt />}
                     endIcon={<ArrowForward />}
-                    sx={{ px: 4, py: 1.5, borderRadius: 2.5, fontWeight: 800 }}
+                    sx={{
+                      px: 4,
+                      py: 1.6,
+                      borderRadius: 2.5,
+                      fontWeight: 800,
+                      fontSize: '1rem',
+                      background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                      boxShadow: '0 8px 24px rgba(37, 99, 235, 0.35)',
+                      textTransform: 'none',
+                      '&:hover': {
+                        background: 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)',
+                      }
+                    }}
                   >
-                    Open Live Command Center
+                    ⚡ Start 360° Financial Audit
                   </Button>
                   <Button
                     variant="outlined"
                     size="large"
                     component={Link}
-                    href="/assessment"
-                    sx={{ px: 3.5, py: 1.5, borderRadius: 2.5, fontWeight: 700 }}
+                    href="/dashboard"
+                    sx={{
+                      px: 3.5,
+                      py: 1.6,
+                      borderRadius: 2.5,
+                      fontWeight: 700,
+                      fontSize: '0.95rem',
+                      textTransform: 'none'
+                    }}
                   >
-                    Run Layoff Audit
+                    Open Live Command Center
                   </Button>
                 </Stack>
 
@@ -268,9 +288,9 @@ export default function Home() {
                     <Slider
                       size="small"
                       value={calcIncome}
-                      min={1000}
-                      max={15000}
-                      step={250}
+                      min={10000}
+                      max={500000}
+                      step={5000}
                       onChange={(_, val) => setCalcIncome(val as number)}
                     />
                   </Box>
@@ -285,9 +305,9 @@ export default function Home() {
                     <Slider
                       size="small"
                       value={calcExpenses}
-                      min={800}
-                      max={10000}
-                      step={100}
+                      min={5000}
+                      max={300000}
+                      step={2000}
                       onChange={(_, val) => setCalcExpenses(val as number)}
                       color="error"
                     />
@@ -304,8 +324,8 @@ export default function Home() {
                       size="small"
                       value={calcSavings}
                       min={0}
-                      max={50000}
-                      step={500}
+                      max={2500000}
+                      step={10000}
                       onChange={(_, val) => setCalcSavings(val as number)}
                       color="success"
                     />
@@ -317,9 +337,18 @@ export default function Home() {
                   variant="contained"
                   component={Link}
                   href="/assessment"
-                  sx={{ mt: 3, py: 1.2, borderRadius: 2.5, fontWeight: 800 }}
+                  sx={{
+                    mt: 3,
+                    py: 1.4,
+                    borderRadius: 2.5,
+                    fontWeight: 800,
+                    textTransform: 'none',
+                    fontSize: '0.95rem',
+                    background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)'
+                  }}
                 >
-                  Run Deep Resilience Stress-Test ➔
+                  ⚡ Run Full 360° Financial Audit &amp; Crisis Doctor ➔
                 </Button>
               </Card>
             </Grid>

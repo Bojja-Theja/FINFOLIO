@@ -222,6 +222,7 @@ export default function Assessment() {
   });
 
   const [result, setResult] = useState<AssessmentResult | null>(null);
+  const [activeCrisisTab, setActiveCrisisTab] = useState<'layoff' | 'medical' | 'inflation' | 'interest'>('layoff');
 
   const handleNumberChange = (field: keyof FinancialData, rawVal: string) => {
     if (rawVal === '' || rawVal === undefined) {
@@ -493,7 +494,7 @@ export default function Assessment() {
       });
 
       setLoading(false);
-    }, 400);
+    }, 50);
   };
 
   // Run automatically on initial render with demo data
@@ -1441,6 +1442,286 @@ Audited by FINFOLIO Personal Finance Intelligence Platform
                     </Paper>
                   ))}
                 </Stack>
+              </Card>
+
+              {/* CRITICAL CONDITION STRESS-TEST & SHOCK DOCTOR */}
+              <Card sx={{ p: 3, borderRadius: 3, boxShadow: '0 8px 30px rgba(0,0,0,0.06)', border: '1px solid', borderColor: 'divider' }}>
+                <Box sx={{ mb: 2.5 }}>
+                  <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 0.5 }}>
+                    <Psychology color="primary" />
+                    <Typography variant="h6" fontWeight="800">
+                      ⚡ Critical Condition Stress-Test & Shock Doctor
+                    </Typography>
+                  </Stack>
+                  <Typography variant="body2" color="text.secondary">
+                    Live simulation of macro shocks and black swan financial crises tailored to your Indian rupee balance sheet.
+                  </Typography>
+                </Box>
+
+                {/* Scenario Toggle Tabs */}
+                <ToggleButtonGroup
+                  value={activeCrisisTab}
+                  exclusive
+                  onChange={(_, val) => { if (val) setActiveCrisisTab(val); }}
+                  size="small"
+                  sx={{ mb: 3, display: 'flex', flexWrap: 'wrap', gap: 0.5 }}
+                >
+                  <ToggleButton value="layoff" sx={{ textTransform: 'none', fontWeight: 700, px: 2, borderRadius: '8px !important' }}>
+                    🚨 Sudden Layoff (6M)
+                  </ToggleButton>
+                  <ToggleButton value="medical" sx={{ textTransform: 'none', fontWeight: 700, px: 2, borderRadius: '8px !important' }}>
+                    🏥 Medical Shock (₹5L)
+                  </ToggleButton>
+                  <ToggleButton value="inflation" sx={{ textTransform: 'none', fontWeight: 700, px: 2, borderRadius: '8px !important' }}>
+                    📈 Inflation Surge (+25%)
+                  </ToggleButton>
+                  <ToggleButton value="interest" sx={{ textTransform: 'none', fontWeight: 700, px: 2, borderRadius: '8px !important' }}>
+                    💳 Loan Rate Spike (+3%)
+                  </ToggleButton>
+                </ToggleButtonGroup>
+
+                {/* TAB 1: LAYOFF SHOCK */}
+                {activeCrisisTab === 'layoff' && (
+                  <Box>
+                    <GridTyped container spacing={2} sx={{ mb: 2 }}>
+                      <GridTyped item xs={12} sm={4}>
+                        <Paper sx={{ p: 2, borderRadius: 2, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider' }}>
+                          <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                            6-Month Essential Burn
+                          </Typography>
+                          <Typography variant="h6" fontWeight={800} color="error.main">
+                            ₹{(Math.round(data.monthlyExpenses * 0.65) * 6).toLocaleString('en-IN')}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            Without salary inflow (Freeze)
+                          </Typography>
+                        </Paper>
+                      </GridTyped>
+                      <GridTyped item xs={12} sm={4}>
+                        <Paper sx={{ p: 2, borderRadius: 2, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider' }}>
+                          <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                            Available Liquid Shield
+                          </Typography>
+                          <Typography variant="h6" fontWeight={800} color="primary.main">
+                            ₹{data.emergencyFund.toLocaleString('en-IN')}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            Cash + Liquid FD / RD
+                          </Typography>
+                        </Paper>
+                      </GridTyped>
+                      <GridTyped item xs={12} sm={4}>
+                        <Paper sx={{ p: 2, borderRadius: 2, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider' }}>
+                          <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                            Freeze Budget Runway
+                          </Typography>
+                          <Typography variant="h6" fontWeight={800} color={result.survivalRunwayDays >= 180 ? 'success.main' : 'warning.main'}>
+                            {result.survivalRunwayDays} Days
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            ~{(result.survivalRunwayDays / 30.4).toFixed(1)} Months survival
+                          </Typography>
+                        </Paper>
+                      </GridTyped>
+                    </GridTyped>
+
+                    <Alert
+                      severity={data.emergencyFund >= Math.round(data.monthlyExpenses * 0.65) * 6 ? 'success' : 'warning'}
+                      sx={{ borderRadius: 2, mb: 1.5 }}
+                    >
+                      <Typography variant="subtitle2" fontWeight={700}>
+                        {data.emergencyFund >= Math.round(data.monthlyExpenses * 0.65) * 6
+                          ? '🛡️ High Layoff Resilience: Your liquid corpus comfortably covers 6+ months of essential living costs.'
+                          : `⚠️ Layoff Deficit: You face a ₹${Math.max(0, (Math.round(data.monthlyExpenses * 0.65) * 6) - data.emergencyFund).toLocaleString('en-IN')} liquidity gap under a 6-month jobless scenario.`}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mt: 0.5 }}>
+                        <strong>Day 1–7 Triage:</strong> 1) Cut wants (₹{data.monthlyWants.toLocaleString('en-IN')}/mo) and subscriptions (₹{data.monthlySubscriptions.toLocaleString('en-IN')}/mo) immediately to activate Freeze Mode. 2) Pause voluntary SIPs. 3) File for PF withdrawal (Form 19/10C) or gratuity if eligible.
+                      </Typography>
+                    </Alert>
+                  </Box>
+                )}
+
+                {/* TAB 2: MEDICAL SHOCK */}
+                {activeCrisisTab === 'medical' && (
+                  <Box>
+                    <GridTyped container spacing={2} sx={{ mb: 2 }}>
+                      <GridTyped item xs={12} sm={4}>
+                        <Paper sx={{ p: 2, borderRadius: 2, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider' }}>
+                          <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                            Emergency Hospitalization
+                          </Typography>
+                          <Typography variant="h6" fontWeight={800} color="error.main">
+                            ₹5,00,000
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            Critical illness / ICU shock
+                          </Typography>
+                        </Paper>
+                      </GridTyped>
+                      <GridTyped item xs={12} sm={4}>
+                        <Paper sx={{ p: 2, borderRadius: 2, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider' }}>
+                          <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                            Active Health Cover
+                          </Typography>
+                          <Typography variant="h6" fontWeight={800} color="primary.main">
+                            ₹{data.healthInsuranceCover.toLocaleString('en-IN')}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            Base policy sum insured
+                          </Typography>
+                        </Paper>
+                      </GridTyped>
+                      <GridTyped item xs={12} sm={4}>
+                        <Paper sx={{ p: 2, borderRadius: 2, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider' }}>
+                          <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                            Out-of-Pocket Cash Drain
+                          </Typography>
+                          <Typography variant="h6" fontWeight={800} color={Math.max(0, 500000 - data.healthInsuranceCover) > 0 ? 'error.main' : 'success.main'}>
+                            ₹{Math.max(0, 500000 - data.healthInsuranceCover).toLocaleString('en-IN')}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            Depletes {data.emergencyFund > 0 ? Math.min(100, Math.round((Math.max(0, 500000 - data.healthInsuranceCover) / data.emergencyFund) * 100)) : 100}% of savings
+                          </Typography>
+                        </Paper>
+                      </GridTyped>
+                    </GridTyped>
+
+                    <Alert
+                      severity={data.healthInsuranceCover >= 500000 ? 'success' : 'error'}
+                      sx={{ borderRadius: 2, mb: 1.5 }}
+                    >
+                      <Typography variant="subtitle2" fontWeight={700}>
+                        {data.healthInsuranceCover >= 500000
+                          ? '🏥 Medical Armor Active: Your ₹' + data.healthInsuranceCover.toLocaleString('en-IN') + ' policy absorbs the full ₹5L shock without eroding emergency cash.'
+                          : `🚨 Critical Medical Gap: A ₹5L hospital bill will wipe out ₹${Math.max(0, 500000 - data.healthInsuranceCover).toLocaleString('en-IN')} from your liquid savings.`}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mt: 0.5 }}>
+                        <strong>Doctor Rx:</strong> {data.healthInsuranceCover < 500000
+                          ? `Procure an individual/floater Super Top-Up health plan (₹10L–₹25L cover with ₹3L deductible) for ~₹3,500/year to prevent medical bankruptcy in India.`
+                          : `Keep health insurance TPA card and pre-auth hospital list accessible. Maintain ₹50k cash on hand for non-medical consumables (syringes, gloves) not covered by insurers.`}
+                      </Typography>
+                    </Alert>
+                  </Box>
+                )}
+
+                {/* TAB 3: INFLATION SURGE */}
+                {activeCrisisTab === 'inflation' && (
+                  <Box>
+                    <GridTyped container spacing={2} sx={{ mb: 2 }}>
+                      <GridTyped item xs={12} sm={4}>
+                        <Paper sx={{ p: 2, borderRadius: 2, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider' }}>
+                          <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                            Current Monthly Outflow
+                          </Typography>
+                          <Typography variant="h6" fontWeight={800}>
+                            ₹{data.monthlyExpenses.toLocaleString('en-IN')}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            Baseline cost of living
+                          </Typography>
+                        </Paper>
+                      </GridTyped>
+                      <GridTyped item xs={12} sm={4}>
+                        <Paper sx={{ p: 2, borderRadius: 2, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider' }}>
+                          <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                            +25% Inflation Burn
+                          </Typography>
+                          <Typography variant="h6" fontWeight={800} color="warning.main">
+                            ₹{Math.round(data.monthlyExpenses * 1.25).toLocaleString('en-IN')}
+                          </Typography>
+                          <Typography variant="caption" color="error.main">
+                            +₹{Math.round(data.monthlyExpenses * 0.25).toLocaleString('en-IN')}/mo extra drain
+                          </Typography>
+                        </Paper>
+                      </GridTyped>
+                      <GridTyped item xs={12} sm={4}>
+                        <Paper sx={{ p: 2, borderRadius: 2, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider' }}>
+                          <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                            Runway Contraction
+                          </Typography>
+                          <Typography variant="h6" fontWeight={800} color="error.main">
+                            -{Math.max(0, result.standardRunwayDays - Math.floor(data.emergencyFund / (Math.max(1, Math.round(data.monthlyExpenses * 1.25)) / 30.417)))} Days
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            Shrinks to {Math.floor(data.emergencyFund / (Math.max(1, Math.round(data.monthlyExpenses * 1.25)) / 30.417))} days
+                          </Typography>
+                        </Paper>
+                      </GridTyped>
+                    </GridTyped>
+
+                    <Alert severity="info" sx={{ borderRadius: 2, mb: 1.5 }}>
+                      <Typography variant="subtitle2" fontWeight={700}>
+                        📉 Inflation Cushion Strategy:
+                      </Typography>
+                      <Typography variant="body2" sx={{ mt: 0.5 }}>
+                        At +25% living cost surge, your monthly surplus adjusts from ₹{(data.monthlyIncome - data.monthlyExpenses).toLocaleString('en-IN')} to ₹{(data.monthlyIncome - Math.round(data.monthlyExpenses * 1.25)).toLocaleString('en-IN')}. Protect your purchasing power by investing at least 20% of income in equity index funds (Nifty 50) and inflation-beating Sovereign Gold Bonds (SGB) or debt instruments beating 7% CPI.
+                      </Typography>
+                    </Alert>
+                  </Box>
+                )}
+
+                {/* TAB 4: INTEREST RATE SHOCK */}
+                {activeCrisisTab === 'interest' && (
+                  <Box>
+                    <GridTyped container spacing={2} sx={{ mb: 2 }}>
+                      <GridTyped item xs={12} sm={4}>
+                        <Paper sx={{ p: 2, borderRadius: 2, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider' }}>
+                          <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                            Outstanding Debt
+                          </Typography>
+                          <Typography variant="h6" fontWeight={800} color={data.debt > 0 ? 'error.main' : 'success.main'}>
+                            ₹{data.debt.toLocaleString('en-IN')}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            Current APR: {data.debtInterestRate}%
+                          </Typography>
+                        </Paper>
+                      </GridTyped>
+                      <GridTyped item xs={12} sm={4}>
+                        <Paper sx={{ p: 2, borderRadius: 2, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider' }}>
+                          <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                            Shock APR (+3%)
+                          </Typography>
+                          <Typography variant="h6" fontWeight={800} color="warning.main">
+                            {(data.debtInterestRate + 3).toFixed(1)}% APR
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            Floating repo rate hike
+                          </Typography>
+                        </Paper>
+                      </GridTyped>
+                      <GridTyped item xs={12} sm={4}>
+                        <Paper sx={{ p: 2, borderRadius: 2, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider' }}>
+                          <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                            Extra Monthly EMI Drain
+                          </Typography>
+                          <Typography variant="h6" fontWeight={800} color="error.main">
+                            +₹{Math.round((data.debt * 0.03) / 12).toLocaleString('en-IN')}/mo
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            +₹{Math.round(data.debt * 0.03).toLocaleString('en-IN')}/yr in pure interest
+                          </Typography>
+                        </Paper>
+                      </GridTyped>
+                    </GridTyped>
+
+                    <Alert
+                      severity={data.debt === 0 ? 'success' : 'warning'}
+                      sx={{ borderRadius: 2, mb: 1.5 }}
+                    >
+                      <Typography variant="subtitle2" fontWeight={700}>
+                        {data.debt === 0
+                          ? '🎉 Debt-Free Bastion: You have zero debt, completely immune to RBI repo rate hikes.'
+                          : `⚠️ Interest Sensitivity Alert: A 3% APR hike drains an extra ₹${Math.round((data.debt * 0.03) / 12).toLocaleString('en-IN')} every month.`}
+                      </Typography>
+                      {data.debt > 0 && (
+                        <Typography variant="body2" sx={{ mt: 0.5 }}>
+                          <strong>Avalanche Rx:</strong> Dedicate ₹{Math.min(data.debt, Math.max(5000, Math.round((data.monthlyIncome - data.monthlyExpenses) * 0.4))).toLocaleString('en-IN')} per month towards prepaying the principal of high-interest credit cards/personal loans ({data.debtInterestRate}% APR). Each ₹50,000 prepaid saves you ₹{Math.round(50000 * ((data.debtInterestRate + 3) / 100)).toLocaleString('en-IN')} per year in recurring interest.
+                        </Typography>
+                      )}
+                    </Alert>
+                  </Box>
+                )}
               </Card>
             </Stack>
           )}

@@ -173,6 +173,32 @@ const Navigation = () => {
       </Box>
       <Divider />
       <List sx={{ pt: 1, flexGrow: 1, overflowY: 'auto' }}>
+        {/* Quick Start Audit in Drawer */}
+        <ListItem disablePadding sx={{ mb: 1 }}>
+          <ListItemButton
+            component={Link}
+            href="/assessment"
+            selected={router.pathname === '/assessment'}
+            onClick={handleDrawerToggle}
+            sx={{
+              borderRadius: 2,
+              mx: 1,
+              bgcolor: alpha(theme.palette.primary.main, 0.08),
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.25)}`,
+              '&.Mui-selected': {
+                backgroundColor: alpha(theme.palette.primary.main, 0.16),
+              },
+            }}
+          >
+            <Box sx={{ mr: 1.5, display: 'flex', alignItems: 'center', color: 'primary.main' }}>
+              <Assessment sx={{ fontSize: 20 }} />
+            </Box>
+            <ListItemText
+              primary="⚡ Start 360° Audit"
+              primaryTypographyProps={{ fontWeight: 800, fontSize: '0.9rem', color: 'primary.main' }}
+            />
+          </ListItemButton>
+        </ListItem>
         {isAuthenticated && (
           <ListItem disablePadding sx={{ mb: 0.5 }}>
             <ListItemButton
@@ -351,6 +377,26 @@ const Navigation = () => {
           {isMobile ? (
             <>
               <Box sx={{ flexGrow: 1 }} />
+              <Button
+                component={Link}
+                href="/assessment"
+                variant={router.pathname === '/assessment' ? 'contained' : 'outlined'}
+                size="small"
+                sx={{
+                  textTransform: 'none',
+                  fontWeight: 800,
+                  fontSize: '0.72rem',
+                  borderRadius: 1.5,
+                  px: 1,
+                  py: 0.3,
+                  mr: 0.5,
+                  borderColor: 'primary.main',
+                  color: router.pathname === '/assessment' ? '#ffffff' : 'primary.main',
+                  background: router.pathname === '/assessment' ? 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)' : 'transparent',
+                }}
+              >
+                ⚡ Audit
+              </Button>
               <Chip
                 size="small"
                 label="₹ INR"
@@ -483,6 +529,33 @@ const Navigation = () => {
               {!isAuthenticated && <Box sx={{ flexGrow: 1 }} />}
 
               <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                {/* Dedicated Start Audit CTA */}
+                <Button
+                  component={Link}
+                  href="/assessment"
+                  variant={router.pathname === '/assessment' ? 'contained' : 'outlined'}
+                  size="small"
+                  sx={{
+                    textTransform: 'none',
+                    fontWeight: 800,
+                    fontSize: '0.82rem',
+                    borderRadius: 2,
+                    px: 1.6,
+                    py: 0.6,
+                    borderColor: 'primary.main',
+                    color: router.pathname === '/assessment' ? '#ffffff' : 'primary.main',
+                    background: router.pathname === '/assessment' ? 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)' : 'transparent',
+                    boxShadow: router.pathname === '/assessment' ? '0 2px 8px rgba(37,99,235,0.3)' : 'none',
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)',
+                      color: '#ffffff',
+                      borderColor: 'primary.dark',
+                    }
+                  }}
+                >
+                  ⚡ Start Audit
+                </Button>
+
                 {/* Currency Indicator (Strictly INR) */}
                 <Tooltip title="FinFolio is strictly configured for Indian Rupee (₹ INR)">
                   <Chip

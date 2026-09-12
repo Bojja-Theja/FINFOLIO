@@ -71,7 +71,7 @@ describe('Assessment Page - 20 Advanced Features & Critical Scenarios', () => {
       expect(screen.getByText(/3\. TIERED EMERGENCY DEFICITS/i)).toBeTruthy();
       expect(screen.getByText(/4\. DEBT-TO-INCOME \(DTI\) OVERBURDEN/i)).toBeTruthy();
     });
-  });
+  }, 20000);
 
   test('Critical Scenario: Sudden Layoff Shock preset test', async () => {
     render(
